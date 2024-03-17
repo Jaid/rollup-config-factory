@@ -41,6 +41,7 @@
     "map-obj": "^5.0.2",
     "normalize-package-data": "^6.0.0",
     "prettier": "^3.2.5",
+    "publishimo": "^5.0.6",
     "read-file-json": "^1.1.0",
     "read-package-json": "^7.0.0",
     "rollup": "^4.13.0",

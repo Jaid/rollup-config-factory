@@ -1,6 +1,8 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, HookMap} from '../ConfigBuilder.js'
 import type {PackageJson} from 'type-fest'
 
+import publishimoPlugin from 'src/plugin/rollupPlugin/publishimo.js'
+
 export type Options = {
   pkg?: PackageJson | string
 }

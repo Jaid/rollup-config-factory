@@ -17,7 +17,7 @@ export const configBuilder: FixtureConfig['configBuilder'] = context => {
     plugins: [
       new CommonPlugin,
       new TypescriptPlugin,
-      // new PkgPlugin,
+      new PkgPlugin,
     ],
   })
   return builder

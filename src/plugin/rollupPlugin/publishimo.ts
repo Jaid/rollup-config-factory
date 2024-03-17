@@ -1,12 +1,15 @@
 import type {Plugin, PluginContext} from 'rollup'
+import type {Entry, PackageJson} from 'type-fest'
 import type {InputOptions} from 'zeug/types'
 
 import {generateDtsBundle} from 'dts-bundle-generator'
+import {default as publishimo} from 'publishimo'
 
 type Options = InputOptions<{
   defaultsType: typeof defaultOptions
   optionalOptions: {
-    tsConfigFile: string
+    extend: PackageJson
+    publishimoOptions: Parameters<typeof publishimo>[0]
   }
 }>
 
@@ -27,11 +30,10 @@ const getEntry = (plugin: PluginContext) => {
   }
 }
 const defaultOptions = {
-  sort: true,
-  generatorBanner: false,
+  pretty: false,
 }
 
-export default function dtsBundleGeneratorPlugin(pluginOptions: Options['parameter'] = {}): Plugin {
+export default function publishimoPlugin(pluginOptions: Options['parameter'] = {}): Plugin {
   const options: Options['merged'] = {
     ...defaultOptions,
     ...pluginOptions,
@@ -43,30 +45,17 @@ export default function dtsBundleGeneratorPlugin(pluginOptions: Options['paramet
       if (!entry) {
         throw new Error(`No entry found, searched in ${[...this.getModuleIds()].length} modules`)
       }
-      const generateDtsBundleOptions: Parameters<typeof generateDtsBundle>[1] = {
-        preferredConfigPath: options.tsConfigFile,
+      const publishimoResult = await publishimo.default(options.publishimoOptions)
+      console.dir(publishimoResult)
+      const outputPkg = {
+        ...publishimoResult.generatedPkg,
+        ...options.extend,
       }
-      const generateDtsBundleEntryOptions: Partial<Parameters<typeof generateDtsBundle>[0][0]> = {
-        output: {
-          sortNodes: options.sort,
-          noBanner: !options.generatorBanner,
-        },
-      }
-      const dtsEntry: Parameters<typeof generateDtsBundle>[0][0] = {
-        ...generateDtsBundleEntryOptions,
-        filePath: entry,
-      }
-      const dtsOutputs = generateDtsBundle([dtsEntry], generateDtsBundleOptions)
-      if (dtsOutputs.length === 0) {
-        return
-      }
-      if (dtsOutputs.length > 1) {
-        throw new Error(`Expected only one dts output, but got ${dtsOutputs.length}`)
-      }
+      const json = options.pretty ? JSON.stringify(outputPkg, null, 2) : JSON.stringify(outputPkg)
       this.emitFile({
         type: `asset`,
-        fileName: `types.d.ts`,
-        source: dtsOutputs[0],
+        fileName: `package.json`,
+        source: json,
       })
     },
   }

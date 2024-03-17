@@ -19,6 +19,7 @@ export const configBuilder: FixtureConfig['configBuilder'] = context => {
     plugins: [
       new CommonPlugin,
       new TypescriptPlugin,
+      PkgPlugin,
       new MinifyPlugin({terserPreset: `aggressive`}),
     ],
   })
