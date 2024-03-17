@@ -1,0 +1,6 @@
+{
+  "extends": "tsconfig-jaid",
+  "include": [
+    "src/**/*.ts"
+  ]
+}

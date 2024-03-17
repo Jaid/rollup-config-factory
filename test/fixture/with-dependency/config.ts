@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import type {FixtureConfig} from '~/test/lib/runTest.js'
+import type {FixtureConfig} from '~/test/lib/types.js'
 
 import assert from 'node:assert'
 
@@ -23,7 +23,7 @@ export const configBuilder: FixtureConfig['configBuilder'] = context => {
   return builder
 }
 
-export const checkExport = (value: unknown) => {
+export const checkExport: FixtureConfig['checkExport'] = value => {
   assert.strictEqual(value.default, `Hello, world!`)
   assert.strictEqual(value.msg, `Hello, world!`)
   assert.strictEqual(value.msgEscaped, `Hello, world!`)

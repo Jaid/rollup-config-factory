@@ -27,7 +27,7 @@ export class CommonPlugin implements ConfigBuilderPlugin {
       builder.setDefault(`output.sourcemap`, `hidden`)
     })
     hooks.buildDevelopment.tap(CommonPlugin.name, () => {
-      builder.setDefault(`output.sourcemap`, `inline`)
+      builder.setDefault(`output.sourcemap`, `hidden`)
     })
     hooks.finalizeOptions.tap(CommonPlugin.name, options => {
       if (!options.outputFolder.includes(`{{mode}}`)) {

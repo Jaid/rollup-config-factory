@@ -1,12 +1,17 @@
 import type {OutputOptions, Plugin, RollupBuild, RollupOptions, RollupOutput} from 'rollup'
-import type {Class, Get, Paths} from 'type-fest'
+import type {Get, Paths} from 'type-fest'
 
+import makeDebug from 'debug'
 import * as lodash from 'lodash-es'
 import {rollup} from 'rollup'
 import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncHook, SyncWaterfallHook} from 'tapable'
 import * as path from 'zeug/path'
 
-// @ts-expect-error
+type PluginGenerator = (options?: unknown) => Plugin
+
+const debug = makeDebug(`rollup-config-factory`).extend(`ConfigBuilder`)
+debug(`loading`)
+
 export type Key = Paths<RollupOptions>
 export type Options = {
   contextFolder: string
@@ -77,28 +82,17 @@ export class ConfigBuilder {
   get rollupConfig() {
     return this.#rollupConfig
   }
-  addPlugin(plugin: unknown, options?: unknown) {
+  addPlugin<T extends PluginGenerator>(plugin: T, options?: Parameters<T>[0]) {
     if (options !== undefined) {
-    // @ts-expect-error
-      this.append(`plugins`, plugin(options))
+      const createdPlugin = plugin(options)
+      debug(`Adding plugin %s with options %O`, createdPlugin.name, options)
+      this.append(`plugins`, createdPlugin)
     } else {
-      this.append(`plugins`, plugin)
+      const createdPlugin = plugin()
+      debug(`Adding plugin %s`, createdPlugin.name)
+      this.append(`plugins`, createdPlugin)
     }
   }
-  // addClassOrInstance(key: Key, plugin: PluginInput, options?: unknown) {
-  //   let instance: RollupPluginInstance
-  //   if (lodash.isFunction(plugin)) {
-  //     const Plugin = (plugin as unknown) as Class<RollupPluginInstance>
-  //     if (options !== undefined) {
-  //       instance = new Plugin(options)
-  //     } else {
-  //       instance = new Plugin
-  //     }
-  //   } else {
-  //     instance = plugin
-  //   }
-  //   this.append(key, instance)
-  // }
   append(key: Key, value: unknown) {
     const array = this.getEnsuredArray(key)
     array.push(value)

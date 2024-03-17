@@ -1,12 +1,11 @@
-import type {FixtureConfig} from '~/test/lib/runTest.js'
+// @ts-nocheck
+
+import type {FixtureConfig} from '~/test/lib/types.js'
 
 import assert from 'node:assert'
 
-import {LibPlugin} from 'src/plugin/LibPlugin.js'
-
 import {ConfigBuilder} from '~/src/ConfigBuilder.js'
 import {CommonPlugin} from '~/src/plugin/CommonPlugin.js'
-import {PkgPlugin} from '~/src/plugin/PkgPlugin.js'
 import {TypescriptPlugin} from '~/src/plugin/TypescriptPlugin.js'
 
 export const configBuilder: FixtureConfig['configBuilder'] = context => {
@@ -18,13 +17,12 @@ export const configBuilder: FixtureConfig['configBuilder'] = context => {
       new CommonPlugin,
       new TypescriptPlugin,
       // new PkgPlugin,
-      // new LibPlugin,
     ],
   })
   return builder
 }
 
-export const checkExport = value => {
+export const checkExport: FixtureConfig['checkExport'] = value => {
   assert.strictEqual(value.default, 2)
-  assert.strictEqual(value.namedExport, "ab")
+  assert.strictEqual(value.namedExport, `ab`)
 }
