@@ -53,18 +53,27 @@ export const runTest = async (testContext: TestContext) => {
     })
   }
   const config = await configBuilder.build()
-  await fs.emptyDir(outputMetaFolder)
   const outputMetaFileJobs: Array<Promise<void>> = []
-  const outputMeta = (outputId: string, value: unknown) => {
+  const outputMeta = async (outputId: string, value: unknown) => {
+    if (!process.env.OUTPUT_META) {
+      return
+    }
+    const requestedOutputs = process.env.OUTPUT_META.split(`,`)
+    if (!requestedOutputs.includes(`*`) && !requestedOutputs.includes(outputId)) {
+      return
+    }
     const file = path.join(outputMetaFolder, `${outputId}.yml`)
+    if (outputMetaFileJobs.length === 0) {
+      await fs.emptyDir(outputMetaFolder)
+    }
     outputMetaFileJobs.push(toCleanYamlFile(value, file))
   }
   try {
-    outputMeta(`context`, context)
-    outputMeta(`config`, config)
+    await outputMeta(`context`, context)
+    await outputMeta(`config`, config)
     const compilation = await configBuilder.compile()
-    outputMeta(`compilation`, compilation)
-    outputMeta(`builder`, lodash.clone(configBuilder))
+    await outputMeta(`compilation`, compilation)
+    await outputMeta(`builder`, lodash.clone(configBuilder))
     // if (process.env.OUTPUT_STATS_JSON) {
     //   const statsInstance = rollupOutput.toJson()
     //   const statsFile = path.join(outputMetaFolder, `stats.json`)
@@ -88,7 +97,7 @@ export const runTest = async (testContext: TestContext) => {
       const exportName = fixtureConfig.mainName ?? `index.js`
       const mainFile = path.join(outputCompilationFolder, exportName)
       const exportValue = await import(pathToFileURL(mainFile).toString()) as {default: unknown}
-      outputMeta(`export`, exportValue)
+      await outputMeta(`export`, exportValue)
       await fixtureConfig.checkExport(exportValue)
     }
   } finally {
