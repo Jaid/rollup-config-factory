@@ -10,6 +10,11 @@ import {rollup} from 'rollup'
 import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncWaterfallHook} from 'tapable'
 import * as path from 'zeug/path'
 
+import {CommonPlugin} from 'src/plugin/CommonPlugin.js'
+import {MinifyPlugin} from 'src/plugin/MinifyPlugin.js'
+import {PkgPlugin} from 'src/plugin/PkgPlugin.js'
+import {TypescriptPlugin} from 'src/plugin/TypescriptPlugin.js'
+
 type PluginGenerator = (options?: unknown) => Plugin
 
 const debug = makeDebug(`rollup-config-factory`).extend(`ConfigBuilder`)
@@ -48,8 +53,18 @@ const defaultOptions = {
   outputFolder: `out/package`,
 }
 export class ConfigBuilder {
-  static createSimple() {
-    return new ConfigBuilder
+  static create(optionsOrPlugins?: Array<ConfigBuilderPlugin> | Options['parameter']) {
+    const isPlugins = Array.isArray(optionsOrPlugins)
+    const configBuilder = new ConfigBuilder(isPlugins ? {} : optionsOrPlugins)
+    configBuilder.addBuilderPlugin(new TypescriptPlugin)
+    if (isPlugins) {
+      for (const plugin of optionsOrPlugins) {
+        configBuilder.addBuilderPlugin(plugin)
+      }
+    }
+    configBuilder.addBuilderPlugin(new PkgPlugin)
+    configBuilder.addBuilderPlugin(new CommonPlugin)
+    return configBuilder
   }
   contextFolder: string
   hooks = new Map<string, AsyncSeriesHook<unknown> | AsyncSeriesWaterfallHook<unknown> | SyncHook<unknown> | SyncWaterfallHook<unknown>>

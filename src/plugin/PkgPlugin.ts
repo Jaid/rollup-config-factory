@@ -6,7 +6,7 @@ import publishimoPlugin from 'src/plugin/rollupPlugin/publishimo.js'
 export class PkgPlugin implements ConfigBuilderPlugin {
   options
   pkg: PackageJson | undefined
-  constructor(options: {}) {
+  constructor(options?: {}) {
     this.options = {}
   }
   apply(builder: ConfigBuilder, hooks: Hooks) {
