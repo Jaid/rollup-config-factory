@@ -1,25 +1,18 @@
-import type {ConfigBuilder, ConfigBuilderPlugin, HookMap} from '../ConfigBuilder.js'
+import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
 import type {PackageJson} from 'type-fest'
 
 import publishimoPlugin from 'src/plugin/rollupPlugin/publishimo.js'
 
-export type Options = {
-  pkg: PackageJson | string
-}
-
 export class PkgPlugin implements ConfigBuilderPlugin {
-  options: Options
+  options
   pkg: PackageJson | undefined
-  constructor(options: Partial<Options> = {}) {
-    this.options = {
-      pkg: `package.json`,
-      ...options,
-    }
+  constructor(options: {}) {
+    this.options = {}
   }
-  apply(builder: ConfigBuilder, hooks: HookMap) {
+  apply(builder: ConfigBuilder, hooks: Hooks) {
     hooks.buildProduction.tap(PkgPlugin.name, () => {
       const publishimoOptions = {
-        pkg: builder.fromContextFolder(`package.json`),
+        pkg: builder.pkg,
         fetchGithub: false,
         includeFields: [
           `dependencies`,

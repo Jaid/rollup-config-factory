@@ -1,4 +1,4 @@
-import type {ConfigBuilder, ConfigBuilderPlugin, HookMap} from '../ConfigBuilder.js'
+import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
 import type {Options as TerserPluginOptions} from '@rollup/plugin-terser'
 import type {InputOptions} from 'zeug/types'
 
@@ -14,7 +14,7 @@ type Options = InputOptions<{
   }
 }>
 
-const outputEcmaVersion = 2020
+const outputEcmaVersion: TerserOptions['ecma'] = 2020
 const defaultTerserOptions: TerserOptions = {
   module: true,
   ecma: outputEcmaVersion,
@@ -51,7 +51,6 @@ const map = new Map<Options['defaultsType']['terserPreset'], TerserOptions>([
   [`default`, defaultTerserOptions],
   [`aggressive`, lodash.defaultsDeep(aggressiveTerserOptionsAdditions, defaultTerserOptions)],
 ])
-const name = `MinifyPlugin`
 export class MinifyPlugin implements ConfigBuilderPlugin {
   options: Options['merged']
   #getTerserOptionsPreset = () => {
@@ -84,8 +83,8 @@ export class MinifyPlugin implements ConfigBuilderPlugin {
       ...options,
     }
   }
-  apply(builder: ConfigBuilder, hooks: HookMap) {
-    hooks.buildProduction.tapPromise(name, async () => {
+  apply(builder: ConfigBuilder, hooks: Hooks) {
+    hooks.buildProduction.tapPromise(MinifyPlugin.name, async () => {
       const pluginOptions = this.#makeTerserPluginOptions()
       builder.addPlugin(terserPlugin, pluginOptions)
     })

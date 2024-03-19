@@ -1,11 +1,7 @@
-import type {ConfigBuilder, ConfigBuilderPlugin, HookMap} from '../ConfigBuilder.js'
+import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
 import type {PackageJson} from 'type-fest'
 
-import publishimoPlugin from 'src/plugin/rollupPlugin/publishimo.js'
-
-export type Options = {
-  pkg?: PackageJson | string
-}
+export type Options = {}
 
 export class CommonPlugin implements ConfigBuilderPlugin {
   protected options: Options
@@ -13,7 +9,7 @@ export class CommonPlugin implements ConfigBuilderPlugin {
   constructor(options: Partial<Options> = {}) {
     this.options = options
   }
-  apply(builder: ConfigBuilder, hooks: HookMap) {
+  apply(builder: ConfigBuilder, hooks: Hooks) {
     hooks.setDefaultOptions.tap(CommonPlugin.name, defaultOptions => {
       return {
         ...defaultOptions,

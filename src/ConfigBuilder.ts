@@ -1,7 +1,8 @@
 import type {OutputOptions, Plugin, RollupBuild, RollupOptions, RollupOutput} from 'rollup'
-import type {Get, Paths} from 'type-fest'
+import type {Get, PackageJson, Paths, TsConfigJson} from 'type-fest'
 
 import makeDebug from 'debug'
+import fs from 'fs-extra'
 import * as lodash from 'lodash-es'
 import {rollup} from 'rollup'
 import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncHook, SyncWaterfallHook} from 'tapable'
@@ -21,22 +22,25 @@ export type Options = {
 }
 
 export interface ConfigBuilderPlugin {
-  apply: (configBuilder: ConfigBuilder, hooks: HookMap) => void
+  apply: (configBuilder: ConfigBuilder, hooks: Hooks) => void
 }
 export const hooks = {
-  afterBuild: new AsyncSeriesHook<[]>,
   afterConstructor: new SyncHook<[]>,
+  init: new AsyncSeriesHook<[ConfigBuilder]>([`configBuilder`]),
+  registerPkg: new AsyncSeriesHook<[PackageJson]>([`pkg`]),
+  registerTsconfig: new AsyncSeriesHook<[TsConfigJson]>([`tsconfig`]),
   beforeBuild: new AsyncSeriesHook<[]>,
   build: new AsyncSeriesHook<[]>,
   buildDevelopment: new AsyncSeriesHook<[]>,
   buildProduction: new AsyncSeriesHook<[]>,
   buildStatic: new AsyncSeriesHook<[]>,
   buildWatch: new AsyncSeriesHook<[]>,
+  afterBuild: new AsyncSeriesHook<[]>,
   finalizeConfig: new AsyncSeriesWaterfallHook<[RollupOptions]>([`config`]),
   finalizeOptions: new SyncWaterfallHook<[Options]>([`options`]),
   setDefaultOptions: new SyncWaterfallHook<[Options]>([`options`]),
 }
-export type HookMap = typeof hooks
+export type Hooks = typeof hooks
 const defaultOptions: Options = {
   contextFolder: `.`,
   env: process.env.NODE_ENV ?? `development`,
@@ -48,6 +52,8 @@ export class ConfigBuilder {
   mode: "development" | "none" | "production"
   options: Options
   outputFolder: string
+  readonly pkg: PackageJson | undefined
+  readonly tsconfig: TsConfigJson | undefined
   #isProduction: boolean
   #isWatch = false
   #rollupConfig: RollupOptions = {}
@@ -104,6 +110,19 @@ export class ConfigBuilder {
     }
   }
   async build() {
+    await hooks.init.promise(this)
+    const pkgFile = this.fromContextFolder(`package.json`)
+    const pkgExists = await fs.pathExists(pkgFile)
+    if (pkgExists) {
+      const pkg = await fs.readJson(pkgFile) as PackageJson
+      await hooks.registerPkg.promise(pkg)
+    }
+    const tsconfigFile = this.fromContextFolder(`tsconfig.json`)
+    const tsconfigExists = await fs.pathExists(tsconfigFile)
+    if (tsconfigExists) {
+      const tsconfig = await fs.readJson(tsconfigFile) as TsConfigJson
+      await hooks.registerTsconfig.promise(tsconfig)
+    }
     await hooks.beforeBuild.promise()
     if (this.isDevelopment) {
       await hooks.buildDevelopment.promise()
