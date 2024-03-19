@@ -9,13 +9,16 @@ import {rollup} from 'rollup'
 import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncWaterfallHook} from 'tapable'
 import * as path from 'zeug/path'
 
+import {debug} from 'lib/debug.js'
 import {CommonPlugin} from 'src/plugin/CommonPlugin.js'
+import {ExternalsPlugin} from 'src/plugin/ExternalsPlugin.js'
 import {MinifyPlugin} from 'src/plugin/MinifyPlugin.js'
 import {PkgPlugin} from 'src/plugin/PkgPlugin.js'
 import {TypescriptPlugin} from 'src/plugin/TypescriptPlugin.js'
 
 type PluginGenerator = (options?: unknown) => Plugin
 
+// @ts-expect-error
 export type Key = Paths<RollupOptions>
 export type Options = InputOptions<{
   defaultsType: typeof defaultOptions
@@ -48,21 +51,25 @@ const defaultOptions = {
   outputFolder: `out/package`,
   useDefaultPlugins: true,
   minify: false as "aggressive" | boolean,
+  externals: true as boolean,
 }
 export class ConfigBuilder {
   contextFolder: string
   hooks = new Map<string, AsyncSeriesHook<unknown> | AsyncSeriesWaterfallHook<unknown> | SyncHook<unknown> | SyncWaterfallHook<unknown>>
   options: Options['merged']
   outputFolder: string
-  readonly pkg: PackageJson | undefined
-  readonly tsconfig: TsConfigJson | undefined
   #isProduction: boolean
   #isWatch = false
+  #pkg: PackageJson | undefined
   #rollupConfig: RollupOptions = {}
+  #tsconfig: TsConfigJson | undefined
   constructor(options: Options['parameter'] = {}) {
     const mergedOptions = {
       ...defaultOptions,
       ...options,
+    }
+    if (mergedOptions.externals) {
+      this.addBuilderPlugin(new ExternalsPlugin)
     }
     if (mergedOptions.useDefaultPlugins) {
       this.addBuilderPlugin(new TypescriptPlugin)
@@ -95,8 +102,14 @@ export class ConfigBuilder {
   get isWatch() {
     return this.#isWatch
   }
+  get pkg() {
+    return this.#pkg
+  }
   get rollupConfig() {
     return this.#rollupConfig
+  }
+  get tsconfig() {
+    return this.#tsconfig
   }
   addBuilderPlugin(plugin: ConfigBuilderPlugin) {
     plugin.apply(this, hooks)
@@ -128,12 +141,14 @@ export class ConfigBuilder {
     const pkgExists = await fs.pathExists(pkgFile)
     if (pkgExists) {
       const pkg = await fs.readJson(pkgFile) as PackageJson
+      this.#pkg = pkg
       await hooks.registerPkg.promise(pkg)
     }
     const tsconfigFile = this.fromContextFolder(`tsconfig.json`)
     const tsconfigExists = await fs.pathExists(tsconfigFile)
     if (tsconfigExists) {
       const tsconfig = await fs.readJson(tsconfigFile) as TsConfigJson
+      this.#tsconfig = tsconfig
       await hooks.registerTsconfig.promise(tsconfig)
     }
     await hooks.beforeBuild.promise()
