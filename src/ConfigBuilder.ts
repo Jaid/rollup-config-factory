@@ -52,7 +52,7 @@ export class ConfigBuilder {
   #isWatch = false
   #rollupConfig: RollupOptions = {}
   constructor(options: Partial<Options> = {}) {
-    for (const plugin of options?.plugins ?? []) {
+    for (const plugin of options.plugins ?? []) {
       plugin.apply(this, hooks)
     }
     const finalDefaultOptions = hooks.setDefaultOptions.call(defaultOptions)
