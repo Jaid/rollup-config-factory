@@ -51,7 +51,7 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
       const resolverOptions: NodeResolveOptions = {
         extensions: [`.js`, `.ts`],
       }
-      builder.addPlugin(nodeResolvePlugin, resolverOptions)
+      builder.addRollupPlugin(nodeResolvePlugin, resolverOptions)
       await this.#addCompilerPlugin()
       if (this.options.rewriteEntry) {
         if (builder.has(`input`)) {
@@ -86,7 +86,7 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
   }
   async #addDtsBundleGeneratorPlugin() {
     const options = this.#getDtsBundleGeneratorPluginOptions()
-    this.#builder.addPlugin(dtsBundleGeneratorPlugin, options)
+    this.#builder.addRollupPlugin(dtsBundleGeneratorPlugin, options)
   }
   async #addDtsEmitterPlugin() {
     if (this.options.declarationEmitter === `dts-bundle-generator`) {
@@ -98,30 +98,30 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
   async #addDtsPlugin() {
     const {default: dtsPlugin} = await import(`rollup-plugin-dts`)
     const options = this.#getDtsPluginOptions()
-    this.#builder.addPlugin(dtsPlugin, options)
+    this.#builder.addRollupPlugin(dtsPlugin, options)
   }
   async #addSucrasePlugin() {
     const {default: sucrasePlugin} = await import(`@rollup/plugin-sucrase`)
     const options = this.#getSucrasePluginOptions()
     // @ts-expect-error
-    this.#builder.addPlugin(sucrasePlugin, options)
+    this.#builder.addRollupPlugin(sucrasePlugin, options)
   }
   async #addSwcPlugin() {
     const {default: swcPlugin} = await import(`@rollup/plugin-swc`)
     const options = this.#getSwcPluginOptions()
     // @ts-expect-error
-    this.#builder.addPlugin(swcPlugin, options)
+    this.#builder.addRollupPlugin(swcPlugin, options)
   }
   async #addTsPlugin() {
     const {default: tsPlugin} = await import(`rollup-plugin-ts`)
     const options = this.#getTsPluginOptions()
-    this.#builder.addPlugin(tsPlugin, options)
+    this.#builder.addRollupPlugin(tsPlugin, options)
   }
   async #addTypescriptPlugin() {
     const {default: typescriptPlugin} = await import(`@rollup/plugin-typescript`)
     const options = this.#getTypescriptPluginOptions()
     // @ts-expect-error
-    this.#builder.addPlugin(typescriptPlugin, options)
+    this.#builder.addRollupPlugin(typescriptPlugin, options)
   }
   #getDtsBundleGeneratorPluginOptions() {
     const pluginOptions: DtsBundleGeneratorPluginOptions = {

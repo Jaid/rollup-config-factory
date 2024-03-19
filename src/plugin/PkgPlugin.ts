@@ -21,7 +21,7 @@ export class PkgPlugin implements ConfigBuilderPlugin {
           `optionalDependencies`,
         ],
       }
-      builder.addPlugin(publishimoPlugin, {
+      builder.addRollupPlugin(publishimoPlugin, {
         publishimoOptions,
         extend: {
           main: `index.js`,

@@ -86,7 +86,7 @@ export class MinifyPlugin implements ConfigBuilderPlugin {
   apply(builder: ConfigBuilder, hooks: Hooks) {
     hooks.buildProduction.tapPromise(MinifyPlugin.name, async () => {
       const pluginOptions = this.#makeTerserPluginOptions()
-      builder.addPlugin(terserPlugin, pluginOptions)
+      builder.addRollupPlugin(terserPlugin, pluginOptions)
     })
   }
 }

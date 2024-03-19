@@ -1,11 +1,12 @@
 import type {OutputOptions, Plugin, RollupBuild, RollupOptions, RollupOutput} from 'rollup'
+import type {SyncHook} from 'tapable'
 import type {Get, PackageJson, Paths, TsConfigJson} from 'type-fest'
 
 import makeDebug from 'debug'
 import fs from 'fs-extra'
 import * as lodash from 'lodash-es'
 import {rollup} from 'rollup'
-import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncHook, SyncWaterfallHook} from 'tapable'
+import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncWaterfallHook} from 'tapable'
 import * as path from 'zeug/path'
 
 type PluginGenerator = (options?: unknown) => Plugin
@@ -25,7 +26,6 @@ export interface ConfigBuilderPlugin {
   apply: (configBuilder: ConfigBuilder, hooks: Hooks) => void
 }
 export const hooks = {
-  afterConstructor: new SyncHook<[]>,
   init: new AsyncSeriesHook<[ConfigBuilder]>([`configBuilder`]),
   registerPkg: new AsyncSeriesHook<[PackageJson]>([`pkg`]),
   registerTsconfig: new AsyncSeriesHook<[TsConfigJson]>([`tsconfig`]),
@@ -59,7 +59,7 @@ export class ConfigBuilder {
   #rollupConfig: RollupOptions = {}
   constructor(options: Partial<Options> = {}) {
     for (const plugin of options.plugins ?? []) {
-      plugin.apply(this, hooks)
+      this.addBuilderPlugin(plugin)
     }
     const finalDefaultOptions = hooks.setDefaultOptions.call(defaultOptions)
     const mergedOptions = {
@@ -71,7 +71,6 @@ export class ConfigBuilder {
     this.mode = this.#isProduction ? `production` : `development`
     this.outputFolder = path.resolve(this.options.outputFolder)
     this.contextFolder = path.resolve(this.options.contextFolder)
-    hooks.afterConstructor.call()
   }
   get isDevelopment() {
     return !this.#isProduction
@@ -88,7 +87,10 @@ export class ConfigBuilder {
   get rollupConfig() {
     return this.#rollupConfig
   }
-  addPlugin<T extends PluginGenerator>(plugin: T, options?: Parameters<T>[0]) {
+  addBuilderPlugin(plugin: ConfigBuilderPlugin) {
+    plugin.apply(this, hooks)
+  }
+  addRollupPlugin<T extends PluginGenerator>(plugin: T, options?: Parameters<T>[0]) {
     if (options !== undefined) {
       const createdPlugin = plugin(options)
       debug(`Adding plugin %s with options %O`, createdPlugin.name, options)
