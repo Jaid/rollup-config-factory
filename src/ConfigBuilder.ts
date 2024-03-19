@@ -3,7 +3,6 @@ import type {SyncHook} from 'tapable'
 import type {Get, PackageJson, Paths, TsConfigJson} from 'type-fest'
 import type {InputOptions} from 'zeug/types'
 
-import makeDebug from 'debug'
 import fs from 'fs-extra'
 import * as lodash from 'lodash-es'
 import {rollup} from 'rollup'
@@ -16,9 +15,6 @@ import {PkgPlugin} from 'src/plugin/PkgPlugin.js'
 import {TypescriptPlugin} from 'src/plugin/TypescriptPlugin.js'
 
 type PluginGenerator = (options?: unknown) => Plugin
-
-const debug = makeDebug(`rollup-config-factory`).extend(`ConfigBuilder`)
-debug(`loading`)
 
 export type Key = Paths<RollupOptions>
 export type Options = InputOptions<{
