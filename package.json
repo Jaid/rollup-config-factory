@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "@prettier/sync": "^0.5.1",
-    "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-sucrase": "^5.0.2",
     "@rollup/plugin-swc": "^0.3.0",
@@ -36,18 +35,13 @@
     "@rollup/plugin-typescript": "^11.1.6",
     "@sindresorhus/is": "^6.2.0",
     "debug": "^4.3.4",
-    "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
-    "map-obj": "^5.0.2",
     "normalize-package-data": "^6.0.0",
     "prettier": "^3.2.5",
     "publishimo": "^5.0.6",
-    "read-file-json": "^1.1.0",
-    "read-package-json": "^7.0.0",
     "rollup": "^4.13.0",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-ts": "^3.4.5",
-    "rollup-plugin-ts-paths": "^1.0.5",
     "tslib": "^2.6.2",
     "typescript": "^5.4.2",
     "zeug": "jaid/zeug#tsc"
@@ -55,13 +49,10 @@
   "devDependencies": {
     "@types/node": "^20.11.29",
     "browserslist-config-jaid-universal": "^3.0.0",
-    "dotenv": "^16.4.5",
     "dts-bundle-generator": "^9.3.1",
     "eslint-config-jaid": "^8.24.0",
-    "globby": "^14.0.1",
     "tsconfig-jaid": "^7.1.0",
     "tsconfig-jaid-node": "^7.1.0",
-    "yaml": "^2.4.1",
-    "yargs": "^17.7.2"
+    "yaml": "^2.4.1"
   }
 }
