@@ -53,15 +53,17 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
       }
       builder.addRollupPlugin(nodeResolvePlugin, resolverOptions)
       await this.#addCompilerPlugin()
-      if (this.options.rewriteEntry) {
-        if (builder.has(`input`)) {
-          const inputFile = builder.get(`input`) as string
-          if (inputFile.endsWith(`.js`)) {
-            builder.set(`input`, inputFile.replace(/\.js$/, `.ts`))
-          }
-        } else {
-          builder.setDefault(`input`, builder.fromContextFolder(`src/index.ts`))
+    })
+    hooks.finalizeConfig.tapPromise(TypescriptPlugin.name, async config => {
+      if (!this.options.rewriteEntry) {
+        return config
+      }
+      if (typeof config.input === `string`) {
+        if (config.input.endsWith(`.js`)) {
+          builder.set(`input`, `${config.input.slice(0, -3)}.ts`)
         }
+      } else {
+        builder.setDefault(`input`, builder.fromContextFolder(`src/index.ts`))
       }
     })
     hooks.buildProduction.tapPromise(TypescriptPlugin.name, async () => {

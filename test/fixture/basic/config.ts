@@ -1,26 +1,9 @@
 // @ts-nocheck
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
-import type {FixtureConfig} from '~/test/lib/types.js'
+import type {FixtureConfig} from '../../lib/types.js'
 
 import assert from 'node:assert'
-
-import {ConfigBuilder} from '~/src/ConfigBuilder.js'
-import {CommonPlugin} from '~/src/plugin/CommonPlugin.js'
-import {TypescriptPlugin} from '~/src/plugin/TypescriptPlugin.js'
-
-export const configBuilder: FixtureConfig['configBuilder'] = context => {
-  const builder = new ConfigBuilder({
-    contextFolder: context.fixtureFolder,
-    outputFolder: context.outputCompilationFolder,
-    env: context.env,
-    plugins: [
-      new CommonPlugin,
-      new TypescriptPlugin,
-      // new PkgPlugin,
-    ],
-  })
-  return builder
-}
 
 export const checkExport: FixtureConfig['checkExport'] = value => {
   assert.strictEqual(value.default, 2)

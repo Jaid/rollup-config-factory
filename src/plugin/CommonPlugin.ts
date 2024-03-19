@@ -10,12 +10,6 @@ export class CommonPlugin implements ConfigBuilderPlugin {
     this.options = options
   }
   apply(builder: ConfigBuilder, hooks: Hooks) {
-    hooks.setDefaultOptions.tap(CommonPlugin.name, defaultOptions => {
-      return {
-        ...defaultOptions,
-        outputFolder: `out/package/{{mode}}`,
-      }
-    })
     hooks.build.tapPromise(CommonPlugin.name, async () => {
       builder.setDefault(`output.generatedCode.arrowFunctions`, true)
       builder.setDefault(`output.generatedCode.constBindings`, true)

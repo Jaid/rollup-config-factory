@@ -2,10 +2,11 @@
   "compilerOptions": {
     "allowArbitraryExtensions": true,
     "baseUrl": "./",
-    "rootDir": "./",
+    "rootDir": "../../..",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "es2022",
+    "strictNullChecks": true,
     "paths": {
       "~/*": [
         "./*"
@@ -13,7 +14,7 @@
     }
   },
   "include": [
-    "./index.ts",
+    "./*",
     "./src/**/*.ts"
   ]
 }

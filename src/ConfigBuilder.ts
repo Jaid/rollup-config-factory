@@ -32,7 +32,6 @@ export interface ConfigBuilderPlugin {
   apply: (configBuilder: ConfigBuilder, hooks: Hooks) => void
 }
 export const hooks = {
-  setDefaultOptions: new SyncWaterfallHook<[Options['defaultsType']]>([`options`]),
   finalizeOptions: new SyncWaterfallHook<[Options['merged']]>([`options`]),
   init: new AsyncSeriesHook<[ConfigBuilder]>([`configBuilder`]),
   registerPkg: new AsyncSeriesHook<[PackageJson]>([`pkg`]),
@@ -51,24 +50,12 @@ const defaultOptions = {
   contextFolder: `.`,
   env: process.env.NODE_ENV ?? `development`,
   outputFolder: `out/package`,
+  useDefaultPlugins: true,
+  minify: false as "aggressive" | boolean,
 }
 export class ConfigBuilder {
-  static create(optionsOrPlugins?: Array<ConfigBuilderPlugin> | Options['parameter']) {
-    const isPlugins = Array.isArray(optionsOrPlugins)
-    const configBuilder = new ConfigBuilder(isPlugins ? {} : optionsOrPlugins)
-    configBuilder.addBuilderPlugin(new TypescriptPlugin)
-    if (isPlugins) {
-      for (const plugin of optionsOrPlugins) {
-        configBuilder.addBuilderPlugin(plugin)
-      }
-    }
-    configBuilder.addBuilderPlugin(new PkgPlugin)
-    configBuilder.addBuilderPlugin(new CommonPlugin)
-    return configBuilder
-  }
   contextFolder: string
   hooks = new Map<string, AsyncSeriesHook<unknown> | AsyncSeriesWaterfallHook<unknown> | SyncHook<unknown> | SyncWaterfallHook<unknown>>
-  mode: "development" | "none" | "production"
   options: Options['merged']
   outputFolder: string
   readonly pkg: PackageJson | undefined
@@ -77,17 +64,26 @@ export class ConfigBuilder {
   #isWatch = false
   #rollupConfig: RollupOptions = {}
   constructor(options: Options['parameter'] = {}) {
-    for (const plugin of options.plugins ?? []) {
+    const mergedOptions = {
+      ...defaultOptions,
+      ...options,
+    }
+    if (mergedOptions.useDefaultPlugins) {
+      this.addBuilderPlugin(new TypescriptPlugin)
+    }
+    for (const plugin of mergedOptions.plugins ?? []) {
       this.addBuilderPlugin(plugin)
     }
-    const finalDefaultOptions = hooks.setDefaultOptions.call(defaultOptions)
-    const mergedOptions = {
-      ...finalDefaultOptions,
-      ...options,
+    if (mergedOptions.minify) {
+      const plugin = mergedOptions.minify === `aggressive` ? new MinifyPlugin({terserPreset: `aggressive`}) : new MinifyPlugin
+      this.addBuilderPlugin(plugin)
+    }
+    if (mergedOptions.useDefaultPlugins) {
+      this.addBuilderPlugin(new PkgPlugin)
+      this.addBuilderPlugin(new CommonPlugin)
     }
     this.options = hooks.finalizeOptions.call(mergedOptions)
     this.#isProduction = this.options.env === `production`
-    this.mode = this.#isProduction ? `production` : `development`
     this.outputFolder = path.resolve(this.options.outputFolder)
     this.contextFolder = path.resolve(this.options.contextFolder)
   }
