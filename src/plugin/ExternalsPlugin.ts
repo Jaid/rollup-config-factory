@@ -38,7 +38,6 @@ export class ExternalsPlugin implements ConfigBuilderPlugin {
     this.#builder = builder
     hooks.build.tapPromise(ExternalsPlugin.name, async () => {
       const filter = await this.#prepareFilter()
-      console.dir(this.#cache)
       builder.set(`external`, filter)
     })
   }

@@ -47,7 +47,6 @@ export default function publishimoPlugin(pluginOptions: Options['parameter'] = {
       }
       // @ts-ignore ts(2339)
       const publishimoResult = await publishimo.default(options.publishimoOptions)
-      console.dir(publishimoResult)
       const outputPkg = {
         ...publishimoResult.generatedPkg,
         ...options.extend,
