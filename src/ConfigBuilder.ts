@@ -40,7 +40,6 @@ export const hooks = {
   buildWatch: new AsyncSeriesHook<[]>,
   afterBuild: new AsyncSeriesHook<[]>,
   finalizeConfig: new AsyncSeriesWaterfallHook<[RollupOptions]>([`config`]),
-
 }
 export type Hooks = typeof hooks
 const defaultOptions = {
