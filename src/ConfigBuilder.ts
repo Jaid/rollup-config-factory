@@ -18,7 +18,7 @@ import {TypescriptPlugin} from 'src/plugin/TypescriptPlugin.js'
 
 type PluginGenerator = (options?: unknown) => Plugin
 
-// @ts-expect-error
+// @ts-ignore
 export type Key = Paths<RollupOptions>
 export type Options = InputOptions<{
   defaultsType: typeof defaultOptions

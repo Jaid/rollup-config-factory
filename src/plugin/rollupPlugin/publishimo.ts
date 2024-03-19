@@ -45,6 +45,7 @@ export default function publishimoPlugin(pluginOptions: Options['parameter'] = {
       if (!entry) {
         throw new Error(`No entry found, searched in ${[...this.getModuleIds()].length} modules`)
       }
+      // @ts-ignore ts(2339)
       const publishimoResult = await publishimo.default(options.publishimoOptions)
       console.dir(publishimoResult)
       const outputPkg = {

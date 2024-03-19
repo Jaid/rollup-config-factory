@@ -11,6 +11,7 @@ export class CommonPlugin implements ConfigBuilderPlugin {
   }
   apply(builder: ConfigBuilder, hooks: Hooks) {
     hooks.build.tapPromise(CommonPlugin.name, async () => {
+      // @ts-ignore ts(2615)
       builder.setDefault(`output.generatedCode.arrowFunctions`, true)
       builder.setDefault(`output.generatedCode.constBindings`, true)
       builder.setDefault(`output.generatedCode.objectShorthand`, true)

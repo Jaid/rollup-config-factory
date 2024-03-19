@@ -1,8 +1,8 @@
-import {ConfigBuilder} from './src/ConfigBuilder.js'
+import {buildConfig} from 'src/index.js'
 
-const builder = new ConfigBuilder({
+const rollupConfig = await buildConfig({
   outputFolder: `out/package/${process.env.NODE_ENV ?? `development`}`,
   externals: true,
 })
-const rollupConfig = await builder.build()
+
 export default rollupConfig
