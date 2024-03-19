@@ -29,6 +29,12 @@ const getEntry = (plugin: PluginContext) => {
 const defaultOptions = {
   sort: true,
   generatorBanner: false,
+  inlinedImports: [
+    `type-fest`,
+    `ts-toolbelt`,
+    `ts-essentials`,
+    `utility-types`,
+  ],
 }
 
 export default function dtsBundleGeneratorPlugin(pluginOptions: Options['parameter'] = {}): Plugin {
@@ -50,6 +56,10 @@ export default function dtsBundleGeneratorPlugin(pluginOptions: Options['paramet
         output: {
           sortNodes: options.sort,
           noBanner: !options.generatorBanner,
+          exportReferencedTypes: false,
+        },
+        libraries: {
+          inlinedLibraries: options.inlinedImports,
         },
       }
       const dtsEntry: Parameters<typeof generateDtsBundle>[0][0] = {
