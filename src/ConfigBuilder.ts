@@ -1,6 +1,7 @@
 import type {OutputOptions, Plugin, RollupBuild, RollupOptions, RollupOutput} from 'rollup'
 import type {SyncHook} from 'tapable'
 import type {Get, PackageJson, Paths, TsConfigJson} from 'type-fest'
+import type {InputOptions} from 'zeug/types'
 
 import makeDebug from 'debug'
 import fs from 'fs-extra'
@@ -15,17 +16,19 @@ const debug = makeDebug(`rollup-config-factory`).extend(`ConfigBuilder`)
 debug(`loading`)
 
 export type Key = Paths<RollupOptions>
-export type Options = {
-  contextFolder: string
-  env: string
-  outputFolder: string
-  plugins?: Array<ConfigBuilderPlugin>
-}
+export type Options = InputOptions<{
+  defaultsType: typeof defaultOptions
+  optionalOptions: {
+    plugins: Array<ConfigBuilderPlugin>
+  }
+}>
 
 export interface ConfigBuilderPlugin {
   apply: (configBuilder: ConfigBuilder, hooks: Hooks) => void
 }
 export const hooks = {
+  setDefaultOptions: new SyncWaterfallHook<[Options['defaultsType']]>([`options`]),
+  finalizeOptions: new SyncWaterfallHook<[Options['merged']]>([`options`]),
   init: new AsyncSeriesHook<[ConfigBuilder]>([`configBuilder`]),
   registerPkg: new AsyncSeriesHook<[PackageJson]>([`pkg`]),
   registerTsconfig: new AsyncSeriesHook<[TsConfigJson]>([`tsconfig`]),
@@ -37,27 +40,29 @@ export const hooks = {
   buildWatch: new AsyncSeriesHook<[]>,
   afterBuild: new AsyncSeriesHook<[]>,
   finalizeConfig: new AsyncSeriesWaterfallHook<[RollupOptions]>([`config`]),
-  finalizeOptions: new SyncWaterfallHook<[Options]>([`options`]),
-  setDefaultOptions: new SyncWaterfallHook<[Options]>([`options`]),
+
 }
 export type Hooks = typeof hooks
-const defaultOptions: Options = {
+const defaultOptions = {
   contextFolder: `.`,
   env: process.env.NODE_ENV ?? `development`,
   outputFolder: `out/package`,
 }
 export class ConfigBuilder {
+  static createSimple() {
+    return new ConfigBuilder
+  }
   contextFolder: string
   hooks = new Map<string, AsyncSeriesHook<unknown> | AsyncSeriesWaterfallHook<unknown> | SyncHook<unknown> | SyncWaterfallHook<unknown>>
   mode: "development" | "none" | "production"
-  options: Options
+  options: Options['merged']
   outputFolder: string
   readonly pkg: PackageJson | undefined
   readonly tsconfig: TsConfigJson | undefined
   #isProduction: boolean
   #isWatch = false
   #rollupConfig: RollupOptions = {}
-  constructor(options: Partial<Options> = {}) {
+  constructor(options: Options['parameter'] = {}) {
     for (const plugin of options.plugins ?? []) {
       this.addBuilderPlugin(plugin)
     }
