@@ -1,5 +1,4 @@
 import type {FixtureConfig, TestContext} from '~/test/lib/types.js'
-import type {Promisable} from 'type-fest'
 
 import path from 'node:path'
 import {fileURLToPath, pathToFileURL} from 'node:url'
@@ -9,6 +8,7 @@ import * as lodash from 'lodash-es'
 
 import {toCleanYamlFile} from '~/lib/toYaml.js'
 import {ConfigBuilder} from '~/src/ConfigBuilder.js'
+import {debug, endTiming, startTiming} from '~/test/lib/debug.js'
 
 const thisFolder = path.dirname(fileURLToPath(import.meta.url))
 const rootFolder = path.resolve(thisFolder, `..`, `..`)
@@ -40,6 +40,7 @@ export const runTest = async (testContext: TestContext) => {
     outputMetaFolder,
     outputFixtureFolder,
   }
+  startTiming(`ConfigBuilder`)
   let configBuilder: ConfigBuilder
   if (fixtureConfig.configBuilder instanceof ConfigBuilder) {
     configBuilder = fixtureConfig.configBuilder
@@ -53,6 +54,7 @@ export const runTest = async (testContext: TestContext) => {
     })
   }
   const config = await configBuilder.build()
+  endTiming(`ConfigBuilder`)
   const outputMetaFileJobs: Array<Promise<void>> = []
   const outputMeta = async (outputId: string, value: unknown) => {
     if (!process.env.OUTPUT_META) {
@@ -69,9 +71,12 @@ export const runTest = async (testContext: TestContext) => {
     outputMetaFileJobs.push(toCleanYamlFile(value, file))
   }
   try {
+    await outputMeta(`env`, process.env)
     await outputMeta(`context`, context)
     await outputMeta(`config`, config)
+    startTiming(`rollup`)
     const compilation = await configBuilder.compile()
+    endTiming(`rollup`)
     await outputMeta(`compilation`, compilation)
     await outputMeta(`builder`, lodash.clone(configBuilder))
     // if (process.env.OUTPUT_STATS_JSON) {

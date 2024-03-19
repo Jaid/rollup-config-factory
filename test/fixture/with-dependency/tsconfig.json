@@ -1,6 +1,19 @@
 {
-  "extends": "tsconfig-jaid",
+  "compilerOptions": {
+    "allowArbitraryExtensions": true,
+    "baseUrl": "./",
+    "rootDir": "./",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2022",
+    "paths": {
+      "~/*": [
+        "./*"
+      ]
+    }
+  },
   "include": [
-    "src/**/*.ts"
+    "./index.ts",
+    "./src/**/*.ts"
   ]
 }

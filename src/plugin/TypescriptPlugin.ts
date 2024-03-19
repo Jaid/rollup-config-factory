@@ -2,14 +2,19 @@ import type {ConfigBuilder, ConfigBuilderPlugin, HookMap} from '../ConfigBuilder
 import type sucrasePlugin from '@rollup/plugin-sucrase'
 import type swcPlugin from '@rollup/plugin-swc'
 import type typescriptPlugin from '@rollup/plugin-typescript'
-import type {default as dtsPlugin} from 'rollup-plugin-dts'
-import type {default as tsPlugin} from 'rollup-plugin-ts'
+import type {PluginImpl} from 'rollup'
+import type dtsPlugin from 'rollup-plugin-dts'
+import type tsPlugin from 'rollup-plugin-ts'
+import type tsPathsPlugin from 'rollup-plugin-ts-paths'
 import type {PackageJson, TsConfigJson} from 'type-fest'
 import type {InputOptions} from 'zeug/types'
 
 import {nodeResolve as nodeResolvePlugin} from '@rollup/plugin-node-resolve'
-import dtsBundleGeneratorPlugin from 'src/plugin/rollupPlugin/dts-bundle-generator.js'
+import fs from 'fs-extra'
 import {type CompilerOptions} from 'typescript'
+import * as path from 'zeug/path'
+
+import dtsBundleGeneratorPlugin from 'src/plugin/rollupPlugin/dts-bundle-generator.js'
 
 type SwcPluginOptions = NonNullable<Parameters<typeof swcPlugin['default']>[0]>
 type SucrasePluginOptions = NonNullable<Parameters<typeof sucrasePlugin['default']>[0]>
@@ -18,6 +23,7 @@ type NodeResolveOptions = NonNullable<Parameters<typeof nodeResolvePlugin>[0]>
 type TsPluginOptions = NonNullable<Parameters<typeof tsPlugin>[0]>
 type DtsPluginOptions = NonNullable<Parameters<typeof dtsPlugin>[0]>
 type DtsBundleGeneratorPluginOptions = NonNullable<Parameters<typeof dtsBundleGeneratorPlugin>[0]>
+type TsPathsPluginOptions = NonNullable<Parameters<typeof tsPathsPlugin['default']>[0]>
 
 export type Options = InputOptions<{
   defaultsType: typeof defaultOptions
@@ -27,7 +33,7 @@ export type Options = InputOptions<{
 }>
 
 const defaultOptions = {
-  compiler: `swc` as "rollup-plugin-ts" | "sucrase" | "swc" | "typescript",
+  compiler: `typescript` as "rollup-plugin-ts" | "sucrase" | "swc" | "typescript",
   rewriteEntry: true,
   declarationEmitter: `dts-bundle-generator` as "dts-bundle-generator" | "rollup-plugin-dts" | false | undefined,
   declarationOnlyForProduction: true,
@@ -36,6 +42,7 @@ const defaultOptions = {
 export class TypescriptPlugin implements ConfigBuilderPlugin {
   protected options: Options['merged']
   protected pkg: PackageJson | undefined
+  protected tsconfig: TsConfigJson | undefined
   #builder: ConfigBuilder
   constructor(options: Options['parameter'] = {}) {
     this.options = {
@@ -46,9 +53,12 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
   apply(builder: ConfigBuilder, hooks: HookMap) {
     this.#builder = builder
     hooks.build.tapPromise(TypescriptPlugin.name, async () => {
+      const tsconfigFile = builder.fromContextFolder(`tsconfig.json`)
+      this.tsconfig = await fs.readJson(tsconfigFile) as TsConfigJson
       const resolverOptions: NodeResolveOptions = {
         extensions: [`.js`, `.ts`],
       }
+      // await this.#addTsPathsPlugin()
       builder.addPlugin(nodeResolvePlugin, resolverOptions)
       await this.#addCompilerPlugin()
       if (this.options.rewriteEntry) {
@@ -110,6 +120,15 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
     // @ts-expect-error
     this.#builder.addPlugin(swcPlugin, options)
   }
+  async #addTsPathsPlugin() {
+    const tsPathsPluginModule = await import(`rollup-plugin-ts-paths`)
+    // @ts-expect-error
+    const tsPathsPlugin = tsPathsPluginModule.default as PluginImpl<TsPathsPluginOptions>
+    const options = this.#getTsPathsPluginOptions()
+    const resolvedPlugin = tsPathsPlugin(options)
+    // @ts-expect-error
+    this.#builder.prepend(`plugins`, resolvedPlugin)
+  }
   async #addTsPlugin() {
     const {default: tsPlugin} = await import(`rollup-plugin-ts`)
     const options = this.#getTsPluginOptions()
@@ -161,6 +180,8 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
             dynamicImport: true,
             decorators: true,
           },
+          baseUrl: this.#builder.contextFolder,
+          paths: this.tsconfig.compilerOptions.paths,
           transform: {
             legacyDecorator: true,
             decoratorMetadata: true,
@@ -171,6 +192,11 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
       },
     }
     return pluginOptions
+  }
+  #getTsPathsPluginOptions(): TsPathsPluginOptions {
+    return {
+      tsConfigDirectory: this.#builder.contextFolder,
+    }
   }
   #getTsPluginOptions() {
     const compilerOptions = this.#getTypescriptCompilerOptions()
@@ -195,15 +221,16 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
   }
   #getTypescriptCompilerOptions(): TsConfigJson['compilerOptions'] {
     return {
-      allowArbitraryExtensions: true,
       module: `esnext`,
       moduleResolution: `bundler`,
-      declaration: true,
       target: `es2022`,
       skipLibCheck: true,
-      outDir: this.#builder.fromOutputFolder(`types`),
-      rootDir: this.#builder.fromContextFolder(`.`),
+      outDir: this.#builder.fromOutputFolder(`ts`),
+      rootDir: this.#builder.contextFolder,
+      baseUrl: this.#builder.contextFolder,
       strict: false,
+      composite: false,
+      declaration: false,
     }
   }
   #getTypescriptOptions(): TsConfigJson {
@@ -212,13 +239,14 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
       compilerOptions: {
         ...compilerOptions,
       },
-      // include: [this.#builder.fromContextFolder(`src/**/*`)],
     }
   }
   #getTypescriptPluginOptions(): TypescriptPluginOptions {
     const typescriptOptions = this.#getTypescriptOptions()
     return {
       ...typescriptOptions,
+      tsconfig: this.#builder.fromContextFolder(`tsconfig.json`),
+      cacheDir: this.#builder.fromContextFolder(`temp`, `.rollup_cache`),
     }
   }
 }
