@@ -10,7 +10,7 @@ import type {InputOptions} from 'zeug/types'
 import {nodeResolve as nodeResolvePlugin} from '@rollup/plugin-node-resolve'
 import {type CompilerOptions} from 'typescript'
 
-import dtsBundleGeneratorPlugin from 'src/plugin/rollupPlugin/dts-bundle-generator.js'
+import dtsBundleGeneratorPlugin from 'src/rollupPlugin/dts-bundle-generator.js'
 
 /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 // @ts-ignore ts(2339)

@@ -1,6 +1,6 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
 
-import publishimoPlugin from 'src/plugin/rollupPlugin/publishimo.js'
+import publishimoPlugin from 'src/rollupPlugin/publishimo.js'
 
 export class PkgPlugin implements ConfigBuilderPlugin {
   options
