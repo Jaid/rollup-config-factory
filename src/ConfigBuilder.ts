@@ -9,6 +9,7 @@ import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncWaterfallHook} from 'tapa
 import * as path from 'zeug/path'
 
 import {debug} from 'lib/debug.js'
+import {normalizePackageData} from 'lib/normalizePackageData.js'
 import {CommonjsPlugin} from 'src/plugin/CommonjsPlugin.js'
 import {CommonPlugin} from 'src/plugin/CommonPlugin.js'
 import {ExternalsPlugin} from 'src/plugin/ExternalsPlugin.js'
@@ -46,8 +47,8 @@ export class ConfigBuilder {
   hooks = {
     finalizeOptions: new SyncWaterfallHook<[Options['merged']]>([`options`]),
     init: new AsyncSeriesHook<[ConfigBuilder]>([`configBuilder`]),
-    registerPkg: new AsyncSeriesWaterfallHook<[PackageJson]>([`pkg`]),
-    registerTsconfig: new AsyncSeriesWaterfallHook<[TsConfigJson]>([`tsconfig`]),
+    processPkg: new AsyncSeriesWaterfallHook<[PackageJson]>([`pkg`]),
+    processTsconfig: new AsyncSeriesWaterfallHook<[TsConfigJson]>([`tsconfig`]),
     beforeBuild: new AsyncSeriesHook<[]>,
     build: new AsyncSeriesHook<[]>,
     buildDevelopment: new AsyncSeriesHook<[]>,
@@ -75,8 +76,10 @@ export class ConfigBuilder {
     if (mergedOptions.externals) {
       this.addBuilderPlugin(new ExternalsPlugin)
     }
-    if (mergedOptions.useDefaultPlugins) {
-      this.addBuilderPlugin(new TypescriptPlugin)
+    if (this.#tsconfig) {
+      if (mergedOptions.useDefaultPlugins) {
+        this.addBuilderPlugin(new TypescriptPlugin)
+      }
     }
     for (const plugin of mergedOptions.plugins ?? []) {
       this.addBuilderPlugin(plugin)
@@ -142,20 +145,9 @@ export class ConfigBuilder {
   }
   async build() {
     await this.hooks.init.promise(this)
-    const pkgFile = this.fromContextFolder(`package.json`)
-    const pkgExists = await fs.pathExists(pkgFile)
-    if (pkgExists) {
-      const pkg = await fs.readJson(pkgFile) as PackageJson
-      this.#pkg = pkg
-      await this.hooks.registerPkg.promise(pkg)
-    }
-    const tsconfigFile = this.fromContextFolder(`tsconfig.json`)
-    const tsconfigExists = await fs.pathExists(tsconfigFile)
-    if (tsconfigExists) {
-      const tsconfig = await fs.readJson(tsconfigFile) as TsConfigJson
-      this.#tsconfig = tsconfig
-      await this.hooks.registerTsconfig.promise(tsconfig)
-    }
+    const processPkgJob = this.#processPkg()
+    const processTsconfigJob = this.#processTsconfig()
+    await Promise.all([processPkgJob, processTsconfigJob])
     await this.hooks.beforeBuild.promise()
     if (this.isDevelopment) {
       await this.hooks.buildDevelopment.promise()
@@ -229,5 +221,27 @@ export class ConfigBuilder {
     if (!this.has(key)) {
       this.set(key, value)
     }
+  }
+  async #processPkg() {
+    const file = this.fromContextFolder(`package.json`)
+    const fileExists = await fs.pathExists(file)
+    if (!fileExists) {
+      return
+    }
+    const pkg = await fs.readJson(file) as PackageJson
+    const pkgNormalized = normalizePackageData(pkg)
+    const pkgModified = await this.hooks.processPkg.promise(pkgNormalized)
+    const pkgModifiedNormalized = normalizePackageData(pkgModified)
+    this.#pkg = pkgModifiedNormalized
+  }
+  async #processTsconfig() {
+    const file = this.fromContextFolder(`tsconfig.json`)
+    const fileExists = await fs.pathExists(file)
+    if (!fileExists) {
+      return
+    }
+    const tsconfig = await fs.readJson(file) as TsConfigJson
+    this.#tsconfig = tsconfig
+    await this.hooks.processTsconfig.promise(tsconfig)
   }
 }
