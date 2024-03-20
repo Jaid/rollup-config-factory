@@ -9,6 +9,7 @@ import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncWaterfallHook} from 'tapa
 import * as path from 'zeug/path'
 
 import {debug} from 'lib/debug.js'
+import {CommonjsPlugin} from 'src/plugin/CommonjsPlugin.js'
 import {CommonPlugin} from 'src/plugin/CommonPlugin.js'
 import {ExternalsPlugin} from 'src/plugin/ExternalsPlugin.js'
 import {MinifyPlugin} from 'src/plugin/MinifyPlugin.js'
@@ -65,6 +66,9 @@ export class ConfigBuilder {
     const mergedOptions = {
       ...defaultOptions,
       ...options,
+    }
+    if (mergedOptions.useDefaultPlugins) {
+      this.addBuilderPlugin(new CommonjsPlugin)
     }
     if (mergedOptions.externals) {
       this.addBuilderPlugin(new ExternalsPlugin)

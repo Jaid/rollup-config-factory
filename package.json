@@ -25,7 +25,7 @@
   "exports": "./src/index.ts",
   "scripts": {
     "test": "node --import tsx --test test/test.ts",
-    "build": "tsx node_modules/rollup/dist/bin/rollup --config --plugin commonjs",
+    "build": "tsx node_modules/rollup/dist/bin/rollup --config",
     "build:production": "wireit"
   },
   "wireit": {
