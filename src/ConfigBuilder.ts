@@ -18,7 +18,8 @@ import {TypescriptPlugin} from 'src/plugin/TypescriptPlugin.js'
 
 type PluginGenerator = (options?: unknown) => Plugin
 
-// @ts-expect-error
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
+// @ts-ignore ts(2615)
 export type Key = Paths<RollupOptions>
 export type Options = InputOptions<{
   defaultsType: typeof defaultOptions
