@@ -12,10 +12,13 @@ import {type CompilerOptions} from 'typescript'
 
 import dtsBundleGeneratorPlugin from 'src/plugin/rollupPlugin/dts-bundle-generator.js'
 
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 // @ts-ignore ts(2339)
 type SwcPluginOptions = NonNullable<Parameters<typeof swcPlugin['default']>[0]>
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 // @ts-ignore ts(2339)
 type SucrasePluginOptions = NonNullable<Parameters<typeof sucrasePlugin['default']>[0]>
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 // @ts-ignore ts(2339)
 type TypescriptPluginOptions = NonNullable<Parameters<typeof typescriptPlugin['default']>[0]>
 type NodeResolveOptions = NonNullable<Parameters<typeof nodeResolvePlugin>[0]>
@@ -63,6 +66,7 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
       }
       if (typeof config.input === `string`) {
         if (config.input.endsWith(`.js`)) {
+          /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
           // @ts-ignore ts(2615)
           builder.set(`input`, `${config.input.slice(0, -3)}.ts`)
         }
@@ -110,12 +114,14 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
   async #addSucrasePlugin() {
     const {default: sucrasePlugin} = await import(`@rollup/plugin-sucrase`)
     const options = this.#getSucrasePluginOptions()
+    /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
     // @ts-ignore ts(2615)
     this.#builder.addRollupPlugin(sucrasePlugin, options)
   }
   async #addSwcPlugin() {
     const {default: swcPlugin} = await import(`@rollup/plugin-swc`)
     const options = this.#getSwcPluginOptions()
+    /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
     // @ts-ignore ts(2615)
     this.#builder.addRollupPlugin(swcPlugin, options)
   }
@@ -127,6 +133,7 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
   async #addTypescriptPlugin() {
     const {default: typescriptPlugin} = await import(`@rollup/plugin-typescript`)
     const options = this.#getTypescriptPluginOptions()
+    /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
     // @ts-ignore ts(2615)
     this.#builder.addRollupPlugin(typescriptPlugin, options)
   }

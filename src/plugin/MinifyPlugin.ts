@@ -86,6 +86,7 @@ export class MinifyPlugin implements ConfigBuilderPlugin {
   apply(builder: ConfigBuilder, hooks: Hooks) {
     hooks.buildProduction.tapPromise(MinifyPlugin.name, async () => {
       const pluginOptions = this.#makeTerserPluginOptions()
+      /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
       // @ts-ignore ts(2345)
       builder.addRollupPlugin(terserPlugin, pluginOptions)
     })
