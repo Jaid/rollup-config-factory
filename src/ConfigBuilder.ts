@@ -1,5 +1,4 @@
 import type {OutputOptions, Plugin, RollupBuild, RollupOptions, RollupOutput} from 'rollup'
-import type {SyncHook} from 'tapable'
 import type {Get, PackageJson, Paths, TsConfigJson} from 'type-fest'
 import type {InputOptions} from 'zeug/types'
 
@@ -18,7 +17,7 @@ import {TypescriptPlugin} from 'src/plugin/TypescriptPlugin.js'
 
 type PluginGenerator = (options?: unknown) => Plugin
 
-// @ts-ignore
+// @ts-expect-error
 export type Key = Paths<RollupOptions>
 export type Options = InputOptions<{
   defaultsType: typeof defaultOptions
@@ -30,32 +29,31 @@ export type Options = InputOptions<{
 export interface ConfigBuilderPlugin {
   apply: (configBuilder: ConfigBuilder, hooks: Hooks) => void
 }
-export const hooks = {
-  finalizeOptions: new SyncWaterfallHook<[Options['merged']]>([`options`]),
-  init: new AsyncSeriesHook<[ConfigBuilder]>([`configBuilder`]),
-  registerPkg: new AsyncSeriesHook<[PackageJson]>([`pkg`]),
-  registerTsconfig: new AsyncSeriesHook<[TsConfigJson]>([`tsconfig`]),
-  beforeBuild: new AsyncSeriesHook<[]>,
-  build: new AsyncSeriesHook<[]>,
-  buildDevelopment: new AsyncSeriesHook<[]>,
-  buildProduction: new AsyncSeriesHook<[]>,
-  buildStatic: new AsyncSeriesHook<[]>,
-  buildWatch: new AsyncSeriesHook<[]>,
-  afterBuild: new AsyncSeriesHook<[]>,
-  finalizeConfig: new AsyncSeriesWaterfallHook<[RollupOptions]>([`config`]),
-}
-export type Hooks = typeof hooks
+export type Hooks = typeof ConfigBuilder.prototype.hooks
 const defaultOptions = {
   contextFolder: `.`,
   env: process.env.NODE_ENV ?? `development`,
   outputFolder: `out/package`,
   useDefaultPlugins: true,
   minify: false as "aggressive" | boolean,
-  externals: true as boolean,
+  externals: `node_modules` as "node_modules" | "pkg" | false | undefined,
 }
 export class ConfigBuilder {
   contextFolder: string
-  hooks = new Map<string, AsyncSeriesHook<unknown> | AsyncSeriesWaterfallHook<unknown> | SyncHook<unknown> | SyncWaterfallHook<unknown>>
+  hooks = {
+    finalizeOptions: new SyncWaterfallHook<[Options['merged']]>([`options`]),
+    init: new AsyncSeriesHook<[ConfigBuilder]>([`configBuilder`]),
+    registerPkg: new AsyncSeriesWaterfallHook<[PackageJson]>([`pkg`]),
+    registerTsconfig: new AsyncSeriesWaterfallHook<[TsConfigJson]>([`tsconfig`]),
+    beforeBuild: new AsyncSeriesHook<[]>,
+    build: new AsyncSeriesHook<[]>,
+    buildDevelopment: new AsyncSeriesHook<[]>,
+    buildProduction: new AsyncSeriesHook<[]>,
+    buildStatic: new AsyncSeriesHook<[]>,
+    buildWatch: new AsyncSeriesHook<[]>,
+    afterBuild: new AsyncSeriesHook<[]>,
+    finalizeConfig: new AsyncSeriesWaterfallHook<[RollupOptions]>([`config`]),
+  }
   options: Options['merged']
   outputFolder: string
   #isProduction: boolean
@@ -85,7 +83,7 @@ export class ConfigBuilder {
       this.addBuilderPlugin(new PkgPlugin)
       this.addBuilderPlugin(new CommonPlugin)
     }
-    this.options = hooks.finalizeOptions.call(mergedOptions)
+    this.options = this.hooks.finalizeOptions.call(mergedOptions)
     this.#isProduction = this.options.env === `production`
     this.outputFolder = path.resolve(this.options.outputFolder)
     this.contextFolder = path.resolve(this.options.contextFolder)
@@ -112,7 +110,7 @@ export class ConfigBuilder {
     return this.#tsconfig
   }
   addBuilderPlugin(plugin: ConfigBuilderPlugin) {
-    plugin.apply(this, hooks)
+    plugin.apply(this, this.hooks)
   }
   addRollupPlugin<T extends PluginGenerator>(plugin: T, options?: Parameters<T>[0]) {
     if (options !== undefined) {
@@ -136,37 +134,37 @@ export class ConfigBuilder {
     }
   }
   async build() {
-    await hooks.init.promise(this)
+    await this.hooks.init.promise(this)
     const pkgFile = this.fromContextFolder(`package.json`)
     const pkgExists = await fs.pathExists(pkgFile)
     if (pkgExists) {
       const pkg = await fs.readJson(pkgFile) as PackageJson
       this.#pkg = pkg
-      await hooks.registerPkg.promise(pkg)
+      await this.hooks.registerPkg.promise(pkg)
     }
     const tsconfigFile = this.fromContextFolder(`tsconfig.json`)
     const tsconfigExists = await fs.pathExists(tsconfigFile)
     if (tsconfigExists) {
       const tsconfig = await fs.readJson(tsconfigFile) as TsConfigJson
       this.#tsconfig = tsconfig
-      await hooks.registerTsconfig.promise(tsconfig)
+      await this.hooks.registerTsconfig.promise(tsconfig)
     }
-    await hooks.beforeBuild.promise()
+    await this.hooks.beforeBuild.promise()
     if (this.isDevelopment) {
-      await hooks.buildDevelopment.promise()
+      await this.hooks.buildDevelopment.promise()
     } else {
-      await hooks.buildProduction.promise()
+      await this.hooks.buildProduction.promise()
     }
     if (this.isWatch) {
-      await hooks.buildWatch.promise()
+      await this.hooks.buildWatch.promise()
     } else {
-      await hooks.buildStatic.promise()
+      await this.hooks.buildStatic.promise()
     }
-    await hooks.build.promise()
+    await this.hooks.build.promise()
     this.setDefault(`output.dir`, this.outputFolder)
     this.setDefault(`input`, this.fromContextFolder(`src`, `index.js`))
-    await hooks.afterBuild.promise()
-    const config = hooks.finalizeConfig.promise(this.#rollupConfig)
+    await this.hooks.afterBuild.promise()
+    const config = this.hooks.finalizeConfig.promise(this.#rollupConfig)
     return config
   }
   async compile() {
