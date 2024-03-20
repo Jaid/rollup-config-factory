@@ -44,6 +44,7 @@
     "@rollup/plugin-swc": "^0.3.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@rollup/plugin-yaml": "^4.1.2",
     "@sindresorhus/is": "^6.2.0",
     "debug": "^4.3.4",
     "find-up": "^7.0.0",

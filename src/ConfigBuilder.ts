@@ -85,6 +85,7 @@ export class ConfigBuilder {
       this.addBuilderPlugin(plugin)
     }
     if (mergedOptions.useDefaultPlugins) {
+      this.addBuilderPlugin(new LoadAssetsPlugin)
       this.addBuilderPlugin(new PkgPlugin)
       this.addBuilderPlugin(new CommonPlugin)
     }
