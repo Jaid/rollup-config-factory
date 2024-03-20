@@ -75,6 +75,14 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
       }
       return config
     })
+    /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
+    // @ts-ignore ts(2615)
+    hooks.processPkg.tap(TypescriptPlugin.name, pkg => {
+      return {
+        types: `types.d.ts`,
+        ...pkg,
+      }
+    })
     hooks.buildProduction.tapPromise(TypescriptPlugin.name, async () => {
       await this.#addDtsEmitterPlugin()
     })

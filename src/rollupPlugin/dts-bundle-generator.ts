@@ -34,6 +34,7 @@ const defaultOptions = {
     `ts-toolbelt`,
     `ts-essentials`,
     `utility-types`,
+    `more-types`,
   ],
 }
 
