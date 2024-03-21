@@ -22,6 +22,9 @@ export class PkgPlugin implements ConfigBuilderPlugin {
       }
       builder.addRollupPlugin(publishimoPlugin, {
         publishimoOptions,
+        extend: {
+          type: `module`,
+        },
       })
     })
   }
