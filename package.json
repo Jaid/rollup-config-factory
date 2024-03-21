@@ -92,7 +92,7 @@
         "lib/**/*",
         "test/**/*"
       ],
-      "command": "tsx node_modules/.bin/ts-node test/test.ts"
+      "command": "node --import tsx --test test/test.ts"
     }
   },
   "dependencies": {
