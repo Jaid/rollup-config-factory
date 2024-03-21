@@ -50,8 +50,9 @@ export class CommonPlugin implements ConfigBuilderPlugin {
     /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
     // @ts-ignore ts(2615)
     hooks.processPkg.tap(CommonPlugin.name, pkg => {
-      const pkgModified = addExportToPkg(pkg, `./lib.js`)
-      return pkgModified
+      const pkgWithEsExport = addExportToPkg(pkg, `./lib.js`, `import`)
+      const pkgWithDefaultExport = addExportToPkg(pkgWithEsExport, `./lib.js`)
+      return pkgWithDefaultExport
     })
   }
 }
