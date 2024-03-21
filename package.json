@@ -28,11 +28,12 @@
     }
   },
   "scripts": {
-    "test": "node --import tsx --test test/test.ts",
+    "test": "wireit",
     "build": "wireit",
     "build:production": "wireit",
-    "dts": "dts-bundle-generator --out-file out/dts/types.d.ts --verbose --no-banner src/index.ts",
-    "release": "wireit"
+    "dts": "wireit",
+    "release": "wireit",
+    "release:windows": "wireit"
   },
   "wireit": {
     "build:production": {
@@ -74,6 +75,24 @@
         "build:production"
       ],
       "command": "fd --unrestricted --full-path 'dist\\\\package\\\\[\\w-]+\\\\production\\\\package.json' --exact-depth 5 --exec pwsh -Command 'npm publish {//}'"
+    },
+    "dts": {
+      "output": [
+        "out/dts/types.d.ts"
+      ],
+      "files": [
+        "src/**/*",
+        "lib/**/*"
+      ],
+      "command": "dts-bundle-generator --out-file out/dts/types.d.ts --verbose --no-banner src/index.ts"
+    },
+    "test": {
+      "files": [
+        "src/**/*",
+        "lib/**/*",
+        "test/**/*"
+      ],
+      "command": "tsx node_modules/.bin/ts-node test/test.ts"
     }
   },
   "dependencies": {
