@@ -74,7 +74,7 @@
       "dependencies": [
         "build:production"
       ],
-      "command": "fd --unrestricted --full-path 'dist\\\\package\\\\[\\w-]+\\\\production\\\\package.json' --exact-depth 5 --exec pwsh -Command 'npm publish {//}'"
+      "command": "fd --unrestricted --full-path 'dist\\\\package\\\\[\\w-]+\\\\production\\\\package.json' --exact-depth 5 --exec powershell -Command 'npm publish {//}'"
     },
     "dts": {
       "output": [
