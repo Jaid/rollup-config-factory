@@ -34,10 +34,11 @@ export interface ConfigBuilderPlugin {
   apply: (configBuilder: ConfigBuilder, hooks: Hooks) => void
 }
 export type Hooks = typeof ConfigBuilder.prototype.hooks
+const nodeEnv = process.env.NODE_ENV ?? `development`
 const defaultOptions = {
   contextFolder: `.`,
-  env: process.env.NODE_ENV ?? `development`,
-  outputFolder: `out/package`,
+  env: nodeEnv,
+  outputFolder: `dist/package/${process.env.npm_package_name ?? `default`}/${nodeEnv}`,
   useDefaultPlugins: true,
   minify: false as "aggressive" | boolean,
   externals: `node_modules` as "node_modules" | "pkg" | false | undefined,
