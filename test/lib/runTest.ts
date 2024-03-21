@@ -99,7 +99,7 @@ export const runTest = async (testContext: TestContext) => {
     //   throw new Error(`Compilation finished with errors`)
     // }
     if (fixtureConfig.checkExport) {
-      const exportName = fixtureConfig.mainName ?? `index.js`
+      const exportName = fixtureConfig.mainName ?? `lib.js`
       const mainFile = path.join(outputCompilationFolder, exportName)
       const exportValue = await import(pathToFileURL(mainFile).toString()) as {default: unknown}
       await outputMeta(`export`, exportValue)
