@@ -8,8 +8,10 @@ import type {PackageJson, TsConfigJson} from 'type-fest'
 import type {InputOptions} from 'zeug/types'
 
 import {nodeResolve as nodeResolvePlugin} from '@rollup/plugin-node-resolve'
+import * as lodash from 'lodash-es'
 import {type CompilerOptions} from 'typescript'
 
+import {addExportToPkg} from 'lib/addExportToPkg.js'
 import dtsBundleGeneratorPlugin from 'src/rollupPlugin/dts-bundle-generator.js'
 
 /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
@@ -38,6 +40,7 @@ const defaultOptions = {
   rewriteEntry: true,
   declarationEmitter: `dts-bundle-generator` as "dts-bundle-generator" | "rollup-plugin-dts" | false | undefined,
   declarationOnlyForProduction: true,
+  declarationFile: `lib.d.ts`,
 }
 
 export class TypescriptPlugin implements ConfigBuilderPlugin {
@@ -78,10 +81,11 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
     /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
     // @ts-ignore ts(2615)
     hooks.processPkg.tap(TypescriptPlugin.name, pkg => {
-      return {
-        types: `types.d.ts`,
-        ...pkg,
+      if (this.options.declarationOnlyForProduction && !this.#builder.isProduction) {
+        return pkg
       }
+      const pkgModified = addExportToPkg(pkg, `./${this.options.declarationFile}`, `types`)
+      return pkgModified
     })
     hooks.buildProduction.tapPromise(TypescriptPlugin.name, async () => {
       await this.#addDtsEmitterPlugin()
@@ -148,6 +152,7 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
   #getDtsBundleGeneratorPluginOptions() {
     const pluginOptions: DtsBundleGeneratorPluginOptions = {
       tsConfigFile: this.#builder.fromContextFolder(`tsconfig.json`),
+      outputFile: this.options.declarationFile,
     }
     return pluginOptions
   }

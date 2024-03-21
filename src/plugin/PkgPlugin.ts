@@ -17,6 +17,7 @@ export class PkgPlugin implements ConfigBuilderPlugin {
           `peerDependencies`,
           `peerDependenciesMeta`,
           `optionalDependencies`,
+          `exports`,
         ],
       }
       builder.addRollupPlugin(publishimoPlugin, {

@@ -36,6 +36,7 @@ const defaultOptions = {
     `utility-types`,
     `more-types`,
   ],
+  outputFile: `types.d.ts`,
 }
 
 export default function dtsBundleGeneratorPlugin(pluginOptions: Options['parameter'] = {}): Plugin {
@@ -76,7 +77,7 @@ export default function dtsBundleGeneratorPlugin(pluginOptions: Options['paramet
       }
       this.emitFile({
         type: `asset`,
-        fileName: `types.d.ts`,
+        fileName: options.outputFile,
         source: dtsOutputs[0],
       })
     },

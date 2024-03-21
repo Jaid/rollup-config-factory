@@ -1,6 +1,21 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
+import type {RollupOptions} from 'rollup'
+import type {PackageJson} from 'type-fest'
+
+import * as lodash from 'lodash-es'
+
+import {addExportToPkg} from 'lib/addExportToPkg.js'
+
+type EntryFileNamesFunction = Exclude<Exclude<RollupOptions['output'], Array<any> | undefined>['entryFileNames'], string | undefined>
 
 export type Options = {}
+
+const entryFileNamesProduction: EntryFileNamesFunction = chunkInfo => {
+  if (chunkInfo.name === `index`) {
+    return `lib.js`
+  }
+  return `[name].js`
+}
 
 export class CommonPlugin implements ConfigBuilderPlugin {
   protected options: Options
@@ -14,6 +29,7 @@ export class CommonPlugin implements ConfigBuilderPlugin {
       builder.setDefault(`output.generatedCode.arrowFunctions`, true)
       builder.setDefault(`output.generatedCode.constBindings`, true)
       builder.setDefault(`output.generatedCode.objectShorthand`, true)
+      builder.setDefault(`output.entryFileNames`, entryFileNamesProduction)
     })
     hooks.buildProduction.tap(CommonPlugin.name, () => {
       builder.setDefault(`output.sourcemap`, `hidden`)
@@ -30,6 +46,12 @@ export class CommonPlugin implements ConfigBuilderPlugin {
         ...options,
         outputFolder: options.outputFolder.replaceAll(`{{mode}}`, mode),
       }
+    })
+    /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
+    // @ts-ignore ts(2615)
+    hooks.processPkg.tap(CommonPlugin.name, pkg => {
+      const pkgModified = addExportToPkg(pkg, `./lib.js`)
+      return pkgModified
     })
   }
 }

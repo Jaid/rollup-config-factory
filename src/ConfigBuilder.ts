@@ -76,10 +76,8 @@ export class ConfigBuilder {
     if (mergedOptions.externals) {
       this.addBuilderPlugin(new ExternalsPlugin)
     }
-    if (this.#tsconfig) {
-      if (mergedOptions.useDefaultPlugins) {
-        this.addBuilderPlugin(new TypescriptPlugin)
-      }
+    if (mergedOptions.useDefaultPlugins) {
+      this.addBuilderPlugin(new TypescriptPlugin)
     }
     for (const plugin of mergedOptions.plugins ?? []) {
       this.addBuilderPlugin(plugin)
@@ -241,7 +239,6 @@ export class ConfigBuilder {
       return
     }
     const tsconfig = await fs.readJson(file) as TsConfigJson
-    this.#tsconfig = tsconfig
-    await this.hooks.processTsconfig.promise(tsconfig)
+    this.#tsconfig = await this.hooks.processTsconfig.promise(tsconfig)
   }
 }
