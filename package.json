@@ -1,6 +1,6 @@
 {
   "name": "rollup-config-factory",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Takes tiny input and returns a Rollup config in the way I personally like.",
   "keywords": [
