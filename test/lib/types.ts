@@ -22,7 +22,7 @@ export type FixtureConfig = {
   checkExport?: (value: unknown) => Promisable<void>
   configBuilder?: ((passedContext: FixtureContext) => Promisable<ConfigBuilder>) | ConfigBuilder
   /**
-   * @default 'main.js'
+   * @default 'lib.js'
    */
   mainName?: string
 }

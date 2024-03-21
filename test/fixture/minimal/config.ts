@@ -19,3 +19,5 @@ export const configBuilder: FixtureConfig['configBuilder'] = context => {
 export const checkExport: FixtureConfig['checkExport'] = value => {
   assert.strictEqual(value.default, 1)
 }
+
+export const mainName: FixtureConfig['mainName'] = `index.js`
