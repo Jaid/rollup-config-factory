@@ -1,8 +1,5 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
 import type {RollupOptions} from 'rollup'
-import type {PackageJson} from 'type-fest'
-
-import * as lodash from 'lodash-es'
 
 import {addExportToPkg} from 'lib/addExportToPkg.js'
 
