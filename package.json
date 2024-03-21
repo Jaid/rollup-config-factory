@@ -29,16 +29,51 @@
   },
   "scripts": {
     "test": "node --import tsx --test test/test.ts",
-    "build": "tsx node_modules/rollup/dist/bin/rollup --config",
+    "build": "wireit",
     "build:production": "wireit",
-    "dts": "dts-bundle-generator --out-file out/dts/types.d.ts --verbose --no-banner src/index.ts"
+    "dts": "dts-bundle-generator --out-file out/dts/types.d.ts --verbose --no-banner src/index.ts",
+    "release": "wireit"
   },
   "wireit": {
     "build:production": {
       "env": {
         "NODE_ENV": "production"
       },
-      "command": "npm run build"
+      "output": [
+        "dist/package/rollup-config-factory/production"
+      ],
+      "files": [
+        "src/**/*",
+        "lib/**/*",
+        "rollup.config.ts"
+      ],
+      "command": "tsx node_modules/rollup/dist/bin/rollup --config rollup.config.ts"
+    },
+    "build": {
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "output": [
+        "dist/package/rollup-config-factory/development"
+      ],
+      "files": [
+        "src/**/*",
+        "lib/**/*",
+        "rollup.config.ts"
+      ],
+      "command": "tsx node_modules/rollup/dist/bin/rollup --config rollup.config.ts"
+    },
+    "release": {
+      "dependencies": [
+        "build:production"
+      ],
+      "command": "fd --unrestricted --full-path 'dist[\\\\/]package[\\\\/][\\w-]+[\\\\/]production[\\\\/]package.json' --exact-depth 5 --exec bash -c 'npm publish {//}'"
+    },
+    "release:windows": {
+      "dependencies": [
+        "build:production"
+      ],
+      "command": "fd --unrestricted --full-path 'dist[\\\\/]package[\\\\/][\\w-]+[\\\\/]production[\\\\/]package.json' --exact-depth 5 --exec pwsh -Command 'npm publish {//}'"
     }
   },
   "dependencies": {
