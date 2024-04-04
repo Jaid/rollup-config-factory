@@ -129,7 +129,7 @@
     "@types/node": "^20.12.4",
     "browserslist-config-jaid-universal": "^3.0.0",
     "eslint-config-jaid": "^8.24.0",
-    "more-types": "^0.2.1",
+    "more-types": "^0.3.0",
     "tsconfig-jaid": "^8.1.0",
     "tsconfig-jaid-node": "^8.1.0",
     "wireit": "^0.14.4",
