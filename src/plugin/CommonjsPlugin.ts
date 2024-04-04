@@ -1,8 +1,9 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
+import type {InputOptions} from 'more-types'
 
 import commonjsPlugin from '@rollup/plugin-commonjs'
 
-export type Options = {}
+type Options = InputOptions
 
 export class CommonjsPlugin implements ConfigBuilderPlugin {
   protected options: Options

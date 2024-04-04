@@ -1,11 +1,12 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
+import type {InputOptions} from 'more-types'
 import type {RollupOptions} from 'rollup'
 
 import {addExportToPkg} from 'lib/addExportToPkg.js'
 
 type EntryFileNamesFunction = Exclude<Exclude<RollupOptions['output'], Array<any> | undefined>['entryFileNames'], string | undefined>
 
-export type Options = {}
+type Options = InputOptions
 
 const entryFileNamesProduction: EntryFileNamesFunction = chunkInfo => {
   if (chunkInfo.name === `index`) {
@@ -15,9 +16,11 @@ const entryFileNamesProduction: EntryFileNamesFunction = chunkInfo => {
 }
 
 export class CommonPlugin implements ConfigBuilderPlugin {
-  protected options: Options
-  constructor(options: Partial<Options> = {}) {
-    this.options = options
+  protected options: Options['merged']
+  constructor(options: Options['parameter'] = {}) {
+    this.options = {
+      ...options,
+    }
   }
   apply(builder: ConfigBuilder, hooks: Hooks) {
     hooks.build.tapPromise(CommonPlugin.name, async () => {
