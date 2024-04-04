@@ -3,12 +3,14 @@ import type {InputOptions} from 'more-types'
 
 import commonjsPlugin from '@rollup/plugin-commonjs'
 
-type Options = InputOptions
+type Options = InputOptions<{}>
 
 export class CommonjsPlugin implements ConfigBuilderPlugin {
-  protected options: Options
-  constructor(options: Partial<Options> = {}) {
-    this.options = options
+  protected options: Options['merged']
+  constructor(options: Options['parameter'] = {}) {
+    this.options = {
+      ...options,
+    }
   }
   apply(builder: ConfigBuilder, hooks: Hooks) {
     hooks.build.tap(CommonjsPlugin.name, () => {

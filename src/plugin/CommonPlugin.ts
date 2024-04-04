@@ -6,7 +6,7 @@ import {addExportToPkg} from 'lib/addExportToPkg.js'
 
 type EntryFileNamesFunction = Exclude<Exclude<RollupOptions['output'], Array<any> | undefined>['entryFileNames'], string | undefined>
 
-type Options = InputOptions
+type Options = InputOptions<{}>
 
 const entryFileNamesProduction: EntryFileNamesFunction = chunkInfo => {
   if (chunkInfo.name === `index`) {
