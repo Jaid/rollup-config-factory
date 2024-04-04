@@ -74,7 +74,7 @@
       "dependencies": [
         "build:production"
       ],
-      "command": "fd --unrestricted --full-path 'dist\\\\package\\\\[\\w-]+\\\\production\\\\package.json' --exact-depth 5 --exec powershell -Command 'npm publish {//}'"
+      "command": "pwsh -Command \"Get-ChildItem -Path 'dist/package/*/production/package.json' | ForEach-Object { npm publish $_.DirectoryName }\""
     },
     "dts": {
       "output": [
