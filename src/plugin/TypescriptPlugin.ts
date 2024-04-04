@@ -84,7 +84,10 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
         return pkg
       }
       const pkgModified = addExportToPkg(pkg, `./${this.options.declarationFile}`, `types`)
-      return pkgModified
+      return {
+        ...pkgModified,
+        types: this.options.declarationFile,
+      }
     })
     hooks.buildProduction.tapPromise(TypescriptPlugin.name, async () => {
       await this.#addDtsEmitterPlugin()
