@@ -1,5 +1,5 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
-import type {InputOptions,ExcludeKnownTypes} from 'more-types'
+import type {ExcludeKnownTypes, InputOptions} from 'more-types'
 import type {RollupOptions} from 'rollup'
 
 import {findUp} from 'find-up'
@@ -9,7 +9,7 @@ export type Options = InputOptions<{
   defaultsType: typeof defaultOptions
 }>
 
-export type ExternalsFilterFunction = ExcludeKnownTypes<RollupOptions['external']>
+export type ExternalsFilterFunction = ExcludeKnownTypes<RollupOptions['external'], Array<RegExp | string>>
 
 const defaultOptions = {
   filterStrategy: `node_modules` as "node_modules" | "pkg",
