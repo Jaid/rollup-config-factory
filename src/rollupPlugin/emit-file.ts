@@ -1,5 +1,5 @@
+import type {InputOptions} from 'more-types'
 import type {Plugin} from 'rollup'
-import type {InputOptions} from 'zeug/types'
 
 type Options = InputOptions<{
   defaultsType: typeof defaultOptions

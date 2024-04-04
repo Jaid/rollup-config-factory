@@ -1,15 +1,15 @@
+import type {InputOptions} from 'more-types'
 import type {OutputOptions, Plugin, RollupBuild, RollupOptions, RollupOutput} from 'rollup'
 import type {Get, PackageJson, Paths, TsConfigJson} from 'type-fest'
-import type {InputOptions} from 'zeug/types'
 
+import path from 'forward-slash-path'
 import fs from 'fs-extra'
 import * as lodash from 'lodash-es'
 import {rollup} from 'rollup'
 import {AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncWaterfallHook} from 'tapable'
-import * as path from 'zeug/path'
+import {normalizePkg} from 'zeug'
 
 import {debug} from 'lib/debug.js'
-import {normalizePackageData} from 'lib/normalizePackageData.js'
 import {CommonjsPlugin} from 'src/plugin/CommonjsPlugin.js'
 import {CommonPlugin} from 'src/plugin/CommonPlugin.js'
 import {ExternalsPlugin} from 'src/plugin/ExternalsPlugin.js'
@@ -228,9 +228,9 @@ export class ConfigBuilder {
       return
     }
     const pkg = await fs.readJson(file) as PackageJson
-    const pkgNormalized = normalizePackageData(pkg)
+    const pkgNormalized = normalizePkg(pkg)
     const pkgModified = await this.hooks.processPkg.promise(pkgNormalized)
-    const pkgModifiedNormalized = normalizePackageData(pkgModified)
+    const pkgModifiedNormalized = normalizePkg(pkgModified)
     this.#pkg = pkgModifiedNormalized
   }
   async #processTsconfig() {

@@ -1,5 +1,5 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
-import type {InputOptions} from 'zeug/types'
+import type {InputOptions} from 'more-types'
 
 import jsonPlugin from '@rollup/plugin-json'
 import yamlPlugin from '@rollup/plugin-yaml'

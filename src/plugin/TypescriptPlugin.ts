@@ -2,13 +2,12 @@ import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.j
 import type sucrasePlugin from '@rollup/plugin-sucrase'
 import type swcPlugin from '@rollup/plugin-swc'
 import type typescriptPlugin from '@rollup/plugin-typescript'
+import type {InputOptions} from 'more-types'
 import type dtsPlugin from 'rollup-plugin-dts'
 import type tsPlugin from 'rollup-plugin-ts'
 import type {PackageJson, TsConfigJson} from 'type-fest'
-import type {InputOptions} from 'zeug/types'
 
 import {nodeResolve as nodeResolvePlugin} from '@rollup/plugin-node-resolve'
-import * as lodash from 'lodash-es'
 import {type CompilerOptions} from 'typescript'
 
 import {addExportToPkg} from 'lib/addExportToPkg.js'

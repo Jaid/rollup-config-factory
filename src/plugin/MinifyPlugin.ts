@@ -1,6 +1,6 @@
 import type {ConfigBuilder, ConfigBuilderPlugin, Hooks} from '../ConfigBuilder.js'
 import type {Options as TerserPluginOptions} from '@rollup/plugin-terser'
-import type {InputOptions} from 'zeug/types'
+import type {InputOptions} from 'more-types'
 
 import terserPlugin from '@rollup/plugin-terser'
 import * as lodash from 'lodash-es'

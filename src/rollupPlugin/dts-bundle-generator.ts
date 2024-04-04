@@ -1,5 +1,5 @@
+import type {InputOptions} from 'more-types'
 import type {Plugin, PluginContext} from 'rollup'
-import type {InputOptions} from 'zeug/types'
 
 import {generateDtsBundle} from 'dts-bundle-generator'
 

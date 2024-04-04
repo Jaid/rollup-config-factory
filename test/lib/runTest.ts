@@ -1,14 +1,14 @@
 import type {FixtureConfig, TestContext} from '~/test/lib/types.js'
 
-import path from 'node:path'
 import {fileURLToPath, pathToFileURL} from 'node:url'
 
+import path from 'forward-slash-path'
 import fs from 'fs-extra'
 import * as lodash from 'lodash-es'
+import {toCleanYamlFile} from 'zeug'
 
-import {toCleanYamlFile} from '~/lib/toYaml.js'
-import {ConfigBuilder} from '~/src/ConfigBuilder.js'
-import {debug, endTiming, startTiming} from '~/test/lib/debug.js'
+import {endTiming, startTiming} from '~/test/lib/debug.js'
+import {ConfigBuilder} from 'src/ConfigBuilder.js'
 
 const thisFolder = path.dirname(fileURLToPath(import.meta.url))
 const rootFolder = path.resolve(thisFolder, `..`, `..`)

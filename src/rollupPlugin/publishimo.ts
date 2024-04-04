@@ -1,8 +1,7 @@
+import type {InputOptions} from 'more-types'
 import type {Plugin, PluginContext} from 'rollup'
-import type {Entry, PackageJson} from 'type-fest'
-import type {InputOptions} from 'zeug/types'
+import type {PackageJson} from 'type-fest'
 
-import {generateDtsBundle} from 'dts-bundle-generator'
 import {default as publishimo} from 'publishimo'
 
 type Options = InputOptions<{
