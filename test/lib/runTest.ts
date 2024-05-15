@@ -2,7 +2,7 @@ import type {FixtureConfig, TestContext} from '~/test/lib/types.js'
 
 import {fileURLToPath, pathToFileURL} from 'node:url'
 
-import path from 'forward-slash-path'
+import * as path from 'forward-slash-path'
 import fs from 'fs-extra'
 import * as lodash from 'lodash-es'
 import {toCleanYamlFile} from 'zeug'

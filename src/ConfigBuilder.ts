@@ -2,7 +2,7 @@ import type {InputOptions} from 'more-types'
 import type {OutputOptions, Plugin, RollupBuild, RollupOptions, RollupOutput} from 'rollup'
 import type {Get, PackageJson, Paths, TsConfigJson} from 'type-fest'
 
-import path from 'forward-slash-path'
+import * as path from 'forward-slash-path'
 import fs from 'fs-extra'
 import * as lodash from 'lodash-es'
 import {rollup} from 'rollup'
