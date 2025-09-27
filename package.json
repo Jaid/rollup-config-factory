@@ -131,7 +131,6 @@
     "browserslist-config-jaid-universal": "^3.0.0",
     "eslint-config-jaid": "^10.0.0",
     "more-types": "^0.6.0",
-    "tsconfig-jaid": "^8.1.0",
     "tsconfig-jaid-node": "^8.1.0",
     "wireit": "^0.14.4",
     "yaml": "^2.4.2"

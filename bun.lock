@@ -33,7 +33,6 @@
         "browserslist-config-jaid-universal": "^3.0.0",
         "eslint-config-jaid": "^10.0.0",
         "more-types": "^0.6.0",
-        "tsconfig-jaid": "^8.1.0",
         "tsconfig-jaid-node": "^8.1.0",
         "wireit": "^0.14.4",
         "yaml": "^2.4.2",
@@ -948,8 +947,6 @@
     "ts-declaration-location": ["ts-declaration-location@1.0.7", "", { "dependencies": { "picomatch": "^4.0.2" }, "peerDependencies": { "typescript": ">=4.0.0" } }, "sha512-EDyGAwH1gO0Ausm9gV6T2nUvBgXT5kGoCMJPllOaooZ+4VvJiKBdZE7wK18N1deEowhcUptS+5GXZK8U/fvpwA=="],
 
     "ts-interface-checker": ["ts-interface-checker@0.1.13", "", {}, "sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA=="],
-
-    "tsconfig-jaid": ["tsconfig-jaid@8.1.0", "", { "dependencies": { "type-fest": "^4.14.0", "typescript": "^5.4.3" } }, "sha512-4v1YgrsdQJ8TXvbhexAlc69qIuk1RJzwzEFI03jGqVwRSh2D9iadj2P4dTJr/e4cJCXzjgh48TAhQED0tdS5wg=="],
 
     "tsconfig-jaid-node": ["tsconfig-jaid-node@8.1.0", "", { "dependencies": { "type-fest": "^4.14.0", "typescript": "^5.4.3" } }, "sha512-4VpCkgwScTJjcw5zpaV35Lx+bnw3nw3Kjyqkiz/1tHOKrzhwHb2YfgqrGhG3YdDSvaTKMOmdUqK/RcM3om/a5A=="],
 
