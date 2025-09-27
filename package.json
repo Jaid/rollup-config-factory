@@ -127,6 +127,7 @@
     "rollup-plugin-ts": "^3.4.5"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.22",
     "browserslist-config-jaid-universal": "^3.0.0",
     "eslint-config-jaid": "^10.0.0",
     "more-types": "^0.6.0",
