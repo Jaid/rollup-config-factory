@@ -1,6 +1,6 @@
 import type {FixtureConfig, TestContext} from '~/test/lib/types.js'
 
-import {fileURLToPath, pathToFileURL} from 'node:url'
+import {fileURLToPath, pathToFileURL} from 'bun:url'
 
 import * as path from 'forward-slash-path'
 import fs from 'fs-extra'
@@ -16,8 +16,8 @@ const rootFolder = path.resolve(thisFolder, `..`, `..`)
 export const fixturesFolder = path.join(rootFolder, `test`, `fixture`)
 export const outputFolder = path.join(rootFolder, `out`, `fixture`)
 
-export const runTest = async (testContext: TestContext) => {
-  const id = testContext.name
+export const runTest = async (id: string) => {
+  console.log('id:', id)
   const {fixtureProject, env} = /^(?<fixtureProject>.+)-(?<env>.+)$/.exec(id)!.groups!
   const fixtureFolder = path.join(fixturesFolder, fixtureProject)
   const outputFixtureFolder = path.join(outputFolder, id)
@@ -31,7 +31,7 @@ export const runTest = async (testContext: TestContext) => {
     fixtureConfig = await import(pathToFileURL(fixtureConfigFile).toString()) as FixtureConfig
   }
   const context = {
-    testContext,
+    testContext: {} as TestContext,
     fixture: fixtureProject,
     id,
     env,

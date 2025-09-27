@@ -3,7 +3,7 @@
 
 import type {FixtureConfig} from '../../lib/types.js'
 
-import assert from 'node:assert'
+import assert from 'bun:assert'
 
 export const checkExport: FixtureConfig['checkExport'] = value => {
   assert.strictEqual(value.default, 2)

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import assert from 'node:assert';
+import assert from 'bun:assert';
 import { ConfigBuilder } from '../../../src/ConfigBuilder.js';
 export const configBuilder = context => {
     const builder = new ConfigBuilder({

@@ -1,5 +1,5 @@
 /// <reference types="node" resolution-mode="require"/>
-import type { describe, it } from 'node:test';
+import type { describe, it } from 'bun:test';
 import type { ConfigBuilder } from 'src/ConfigBuilder.js';
 import type { Promisable } from 'type-fest';
 export type TestFunction = NonNullable<Parameters<typeof it>[0]>;

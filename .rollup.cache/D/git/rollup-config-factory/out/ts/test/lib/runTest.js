@@ -1,5 +1,5 @@
-import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import path from 'bun:path';
+import { fileURLToPath, pathToFileURL } from 'bun:url';
 import fs from 'fs-extra';
 import * as lodash from 'lodash-es';
 import { toCleanYamlFile } from '~/lib/toYaml.js';

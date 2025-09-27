@@ -2,7 +2,7 @@
 
 import type {FixtureConfig} from '../../lib/types.js'
 
-import assert from 'node:assert'
+import assert from 'bun:assert'
 
 import {ConfigBuilder} from '../../../src/ConfigBuilder.js'
 

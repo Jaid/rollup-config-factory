@@ -1,4 +1,4 @@
-import console from 'node:console';
+import console from 'bun:console';
 import prettier from '@prettier/sync';
 import fs from 'fs-extra';
 import yaml, { Document, Scalar, YAMLMap } from 'yaml';

@@ -1,1 +1,13 @@
-{"version":3,"file":"config.js","sourceRoot":"","sources":["../../../../../test/fixture/minimal/config.ts"],"names":[],"mappings":"AAAA,cAAc;AAId,OAAO,MAAM,MAAM,aAAa,CAAA;AAEhC,OAAO,EAAC,aAAa,EAAC,MAAM,+BAA+B,CAAA;AAE3D,MAAM,CAAC,MAAM,aAAa,GAAmC,OAAO,CAAC,EAAE;IACrE,MAAM,OAAO,GAAG,IAAI,aAAa,CAAC;QAChC,aAAa,EAAE,OAAO,CAAC,aAAa;QACpC,YAAY,EAAE,OAAO,CAAC,uBAAuB;QAC7C,GAAG,EAAE,OAAO,CAAC,GAAG;QAChB,iBAAiB,EAAE,KAAK;KACzB,CAAC,CAAA;IACF,OAAO,OAAO,CAAA;AAChB,CAAC,CAAA;AAED,MAAM,CAAC,MAAM,WAAW,GAAiC,KAAK,CAAC,EAAE;IAC/D,MAAM,CAAC,WAAW,CAAC,KAAK,CAAC,OAAO,EAAE,CAAC,CAAC,CAAA;AACtC,CAAC,CAAA","sourcesContent":["// @ts-nocheck\n\nimport type {FixtureConfig} from '../../lib/types.js'\n\nimport assert from 'node:assert'\n\nimport {ConfigBuilder} from '../../../src/ConfigBuilder.js'\n\nexport const configBuilder: FixtureConfig['configBuilder'] = context => {\n  const builder = new ConfigBuilder({\n    contextFolder: context.fixtureFolder,\n    outputFolder: context.outputCompilationFolder,\n    env: context.env,\n    useDefaultPlugins: false,\n  })\n  return builder\n}\n\nexport const checkExport: FixtureConfig['checkExport'] = value => {\n  assert.strictEqual(value.default, 1)\n}\n"]}
+{
+  "version": 3,
+  "file": "config.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../../../../test/fixture/minimal/config.ts"
+  ],
+  "names": [],
+  "mappings": "AAAA,cAAc;AAId,OAAO,MAAM,MAAM,aAAa,CAAA;AAEhC,OAAO,EAAC,aAAa,EAAC,MAAM,+BAA+B,CAAA;AAE3D,MAAM,CAAC,MAAM,aAAa,GAAmC,OAAO,CAAC,EAAE;IACrE,MAAM,OAAO,GAAG,IAAI,aAAa,CAAC;QAChC,aAAa,EAAE,OAAO,CAAC,aAAa;QACpC,YAAY,EAAE,OAAO,CAAC,uBAAuB;QAC7C,GAAG,EAAE,OAAO,CAAC,GAAG;QAChB,iBAAiB,EAAE,KAAK;KACzB,CAAC,CAAA;IACF,OAAO,OAAO,CAAA;AAChB,CAAC,CAAA;AAED,MAAM,CAAC,MAAM,WAAW,GAAiC,KAAK,CAAC,EAAE;IAC/D,MAAM,CAAC,WAAW,CAAC,KAAK,CAAC,OAAO,EAAE,CAAC,CAAC,CAAA;AACtC,CAAC,CAAA",
+  "sourcesContent": [
+    "// @ts-nocheck\n\nimport type {FixtureConfig} from '../../lib/types.js'\n\nimport assert from 'bun:assert'\n\nimport {ConfigBuilder} from '../../../src/ConfigBuilder.js'\n\nexport const configBuilder: FixtureConfig['configBuilder'] = context => {\n  const builder = new ConfigBuilder({\n    contextFolder: context.fixtureFolder,\n    outputFolder: context.outputCompilationFolder,\n    env: context.env,\n    useDefaultPlugins: false,\n  })\n  return builder\n}\n\nexport const checkExport: FixtureConfig['checkExport'] = value => {\n  assert.strictEqual(value.default, 1)\n}\n"
+  ]
+}

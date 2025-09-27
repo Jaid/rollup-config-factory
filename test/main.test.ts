@@ -1,12 +1,12 @@
-import {test} from 'node:test'
+import {test} from 'bun:test'
 
 import {runTest} from './lib/runTest.js'
 
-test(`minimal-development`, async testContext => runTest(testContext))
-test(`minimal-production`, async testContext => runTest(testContext))
-test(`basic-development`, async testContext => runTest(testContext))
-test(`basic-production`, async testContext => runTest(testContext))
-test(`with-dependency-development`, async testContext => runTest(testContext))
-test(`with-dependency-production`, async testContext => runTest(testContext))
-test(`minify-development`, async testContext => runTest(testContext))
-test(`minify-production`, async testContext => runTest(testContext))
+test(`minimal-development`, async () => runTest(`minimal-development`))
+test(`minimal-production`, async () => runTest(`minimal-production`))
+test(`basic-development`, async () => runTest(`basic-development`))
+test(`basic-production`, async () => runTest(`basic-production`))
+test(`with-dependency-development`, async () => runTest(`with-dependency-development`))
+test(`with-dependency-production`, async () => runTest(`with-dependency-production`))
+test(`minify-development`, async () => runTest(`minify-development`))
+test(`minify-production`, async () => runTest(`minify-production`))

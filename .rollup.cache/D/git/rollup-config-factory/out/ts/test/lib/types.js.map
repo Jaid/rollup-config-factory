@@ -1,1 +1,13 @@
-{"version":3,"file":"types.js","sourceRoot":"","sources":["../../../../test/lib/types.ts"],"names":[],"mappings":"","sourcesContent":["import type {describe, it} from 'node:test'\nimport type {ConfigBuilder} from 'src/ConfigBuilder.js'\nimport type {Promisable} from 'type-fest'\n\nexport type TestFunction = NonNullable<Parameters<typeof it>[0]>\nexport type TestContext = Parameters<TestFunction>[0]\nexport type SuiteFunction = NonNullable<Parameters<typeof describe>[0]>\nexport type SuiteContext = Parameters<SuiteFunction>[0]\n\nexport type FixtureContext = {\n  env: string\n  fixture: string\n  fixtureFolder: string\n  id: string\n  outputCompilationFolder: string\n  outputFixtureFolder: string\n  outputMetaFolder: string\n  testContext: TestContext\n}\n\nexport type FixtureConfig = {\n  checkExport?: (value: unknown) => Promisable<void>\n  configBuilder?: ((passedContext: FixtureContext) => Promisable<ConfigBuilder>) | ConfigBuilder\n  /**\n   * @default 'main.js'\n   */\n  mainName?: string\n}\n"]}
+{
+  "version": 3,
+  "file": "types.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../../../test/lib/types.ts"
+  ],
+  "names": [],
+  "mappings": "",
+  "sourcesContent": [
+    "import type {describe, it} from 'bun:test'\nimport type {ConfigBuilder} from 'src/ConfigBuilder.js'\nimport type {Promisable} from 'type-fest'\n\nexport type TestFunction = NonNullable<Parameters<typeof it>[0]>\nexport type TestContext = Parameters<TestFunction>[0]\nexport type SuiteFunction = NonNullable<Parameters<typeof describe>[0]>\nexport type SuiteContext = Parameters<SuiteFunction>[0]\n\nexport type FixtureContext = {\n  env: string\n  fixture: string\n  fixtureFolder: string\n  id: string\n  outputCompilationFolder: string\n  outputFixtureFolder: string\n  outputMetaFolder: string\n  testContext: TestContext\n}\n\nexport type FixtureConfig = {\n  checkExport?: (value: unknown) => Promisable<void>\n  configBuilder?: ((passedContext: FixtureContext) => Promisable<ConfigBuilder>) | ConfigBuilder\n  /**\n   * @default 'main.js'\n   */\n  mainName?: string\n}\n"
+  ]
+}

@@ -1,4 +1,4 @@
-import { test } from 'node:test';
+import { test } from 'bun:test';
 import { runTest } from './lib/runTest.js';
 test(`minimal-development`, async (testContext) => runTest(testContext));
 test(`minimal-production`, async (testContext) => runTest(testContext));
