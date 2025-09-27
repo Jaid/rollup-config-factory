@@ -1,6 +1,3 @@
 {
-  "extends": "tsconfig-jaid-node",
-  "exclude": [
-    "test/fixture"
-  ]
+  "extends": "./node_modules/tsconfig-jaid-node/base.json"
 }

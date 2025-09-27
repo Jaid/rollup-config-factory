@@ -1,0 +1,12 @@
+import yaml from 'yaml';
+type StringifyReplacer = Parameters<typeof yaml["stringify"]>["1"];
+type StringifyOptions = Parameters<typeof yaml["stringify"]>["2"];
+export type Visitor = Parameters<typeof yaml["visit"]>[1];
+export declare const yamlStringifySettings: StringifyOptions;
+export declare const replacer: StringifyReplacer;
+export declare const skipUnderscoreReplacer: StringifyReplacer;
+export declare const toYaml: (input: unknown) => any;
+export declare const toYamlFile: (input: unknown, file: string) => Promise<void>;
+export declare const toCleanYaml: (input: unknown) => string;
+export declare const toCleanYamlFile: (input: unknown, file: string) => Promise<void>;
+export {};

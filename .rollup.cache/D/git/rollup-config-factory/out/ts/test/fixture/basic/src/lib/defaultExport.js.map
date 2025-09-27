@@ -1,0 +1,1 @@
+{"version":3,"file":"defaultExport.js","sourceRoot":"","sources":["../../../../../../../test/fixture/basic/src/lib/defaultExport.ts"],"names":[],"mappings":"AAAA,eAAe,CAAC,CAAA","sourcesContent":["export default 1\n"]}

@@ -39,6 +39,7 @@ Temporary Items
 /out/
 /dist/
 /temp/
+/private/
 /srcCompiled/
 /srcCompiled-*/
 
@@ -54,13 +55,9 @@ node_modules/
 *.tsbuildinfo
 .npm
 .npmrc
-.eslintcache
 .node_repl_history
 package-lock.json
 !/package-lock.json
 
-# Project specific
-
-/test/fixture/*/temp/
-.rollup.cache/
-/.wireit/
+# ESLint
+.eslintcache
