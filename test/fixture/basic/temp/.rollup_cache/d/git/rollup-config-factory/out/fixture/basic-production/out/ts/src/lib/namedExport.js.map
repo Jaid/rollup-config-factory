@@ -1,1 +1,0 @@
-{"version":3,"file":"namedExport.js","sourceRoot":"","sources":["../../../../../../../test/fixture/basic/src/lib/namedExport.ts"],"names":[],"mappings":"AAAA,eAAe,GAAG,CAAA","sourcesContent":["export default `a`\n"]}
