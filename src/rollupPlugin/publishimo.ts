@@ -1,16 +1,34 @@
 import type {InputOptions} from 'more-types'
 import type {Plugin, PluginContext} from 'rollup'
 import type {PackageJson} from 'type-fest'
+import type {options as PublishimoOptions, result as PublishimoResult} from 'publishimo'
 
-import {default as publishimo} from 'publishimo'
+import publishimo from 'publishimo'
+
+type PublishimoFunction = (options: PublishimoOptions) => Promise<PublishimoResult>
 
 type Options = InputOptions<{
   defaultsType: typeof defaultOptions
   optionalOptions: {
     extend: PackageJson
-    publishimoOptions: Parameters<typeof publishimo>[0]
+    publishimoOptions: PublishimoOptions
   }
 }>
+
+const resolvePublishimo = (moduleExport: unknown): PublishimoFunction => {
+  if (typeof moduleExport === `function`) {
+    return moduleExport as PublishimoFunction
+  }
+  if (moduleExport && typeof moduleExport === `object` && `default` in moduleExport) {
+    const defaultExport = (moduleExport as {default: unknown}).default
+    if (typeof defaultExport === `function`) {
+      return defaultExport as PublishimoFunction
+    }
+  }
+  throw new TypeError(`Unsupported publishimo export shape`)
+}
+
+const publishimoFn = resolvePublishimo(publishimo)
 
 const getEntry = (plugin: PluginContext) => {
   for (const id of plugin.getModuleIds()) {
@@ -46,7 +64,7 @@ export default function publishimoPlugin(pluginOptions: Options['parameter'] = {
       }
       /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
       // @ts-ignore ts(2339)
-      const publishimoResult = await publishimo.default(options.publishimoOptions)
+  const publishimoResult = await publishimoFn(options.publishimoOptions)
       const outputPkg = {
         ...publishimoResult.generatedPkg,
         ...options.extend,
