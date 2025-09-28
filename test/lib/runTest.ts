@@ -1,6 +1,6 @@
-import type {FixtureConfig, TestContext} from '~/test/lib/types.js'
+import type {FixtureConfig, FixtureContext} from '~/test/lib/types.js'
 
-import {fileURLToPath, pathToFileURL} from 'bun:url'
+import {fileURLToPath, pathToFileURL} from 'url'
 
 import * as path from 'forward-slash-path'
 import fs from 'fs-extra'
@@ -29,7 +29,7 @@ export const runTest = async (id: string) => {
   if (fixtureConfigFileExists) {
     fixtureConfig = await import(pathToFileURL(fixtureConfigFile).toString()) as FixtureConfig
   }
-  const context = {
+  const context: FixtureContext = {
     fixture: fixtureProject,
     id,
     env,
