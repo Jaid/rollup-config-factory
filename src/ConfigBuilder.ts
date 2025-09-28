@@ -1,6 +1,6 @@
 import type {InputOptions} from 'more-types'
 import type {OutputOptions, Plugin, RollupBuild, RollupOptions, RollupOutput} from 'rollup'
-import type {Get, PackageJson, Paths, TsConfigJson} from 'type-fest'
+import type {PackageJson, TsConfigJson} from 'type-fest'
 
 import * as path from 'forward-slash-path'
 import fs from 'fs-extra'
@@ -22,7 +22,7 @@ type PluginGenerator = (options?: unknown) => Plugin
 
 /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 // @ts-ignore ts(2615)
-export type Key = Paths<RollupOptions>
+export type Key = string | ReadonlyArray<string | number>
 export type Options = InputOptions<{
   defaultsType: typeof defaultOptions
   optionalOptions: {
@@ -188,8 +188,8 @@ export class ConfigBuilder {
   fromOutputFolder(...pathSegments: Array<string>) {
     return path.join(this.outputFolder, ...pathSegments)
   }
-  get<T extends Key>(key: T): Get<RollupOptions, T> {
-    return lodash.get(this.#rollupConfig, key) as Get<RollupOptions, T>
+  get<T = unknown>(key: Key) {
+    return lodash.get(this.#rollupConfig, key as string | Array<string | number>) as T
   }
   getEnsuredArray(key: Key) {
     const array = this.get(key) as Array<unknown> | undefined
@@ -201,7 +201,7 @@ export class ConfigBuilder {
     return value
   }
   has(key: Key) {
-    return lodash.has(this.#rollupConfig, key)
+    return lodash.has(this.#rollupConfig, key as string | Array<string | number>)
   }
   prepend(key: Key, value: unknown) {
     const array = this.getEnsuredArray(key)
@@ -213,10 +213,10 @@ export class ConfigBuilder {
       array.unshift(value)
     }
   }
-  set<T extends Key>(key: T, value: Get<RollupOptions, T>) {
-    lodash.set(this.#rollupConfig, key, value)
+  set<T>(key: Key, value: T) {
+    lodash.set(this.#rollupConfig, key as string | Array<string | number>, value)
   }
-  setDefault<T extends Key>(key: T, value: Get<RollupOptions, T>) {
+  setDefault<T>(key: Key, value: T) {
     if (!this.has(key)) {
       this.set(key, value)
     }
