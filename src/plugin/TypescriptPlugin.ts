@@ -197,7 +197,7 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
             legacyDecorator: true,
             decoratorMetadata: true,
           },
-          target: `es2022`,
+          target: `esnext`,
           keepClassNames: true,
         },
       },
@@ -229,7 +229,7 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
     return {
       module: `esnext`,
       moduleResolution: `bundler`,
-      target: `es2022`,
+      target: `esnext`,
       skipLibCheck: true,
       outDir: this.#builder.fromOutputFolder(`ts`),
       rootDir: this.#builder.contextFolder,
