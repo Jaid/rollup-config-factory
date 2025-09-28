@@ -8,6 +8,6 @@ export const startTiming = (label: string) => {
 
 export const endTiming = (label: string, eventName?: string) => {
   performance.mark(`${label}/end`)
-  const measure = performance.measure(label, `${label}/start`, `${label}/end`)
+  const measure = performance.measure(label, `${label}/start`, `${label}/end`) as PerformanceMeasure
   debug(`${eventName ?? label} took ${measure.duration.toFixed(2)} ms`)
 }

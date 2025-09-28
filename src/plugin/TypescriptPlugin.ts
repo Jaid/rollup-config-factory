@@ -37,7 +37,7 @@ export type Options = InputOptions<{
 const defaultOptions = {
   compiler: `typescript` as "rollup-plugin-ts" | "sucrase" | "swc" | "typescript",
   rewriteEntry: true,
-  declarationEmitter: `dts-bundle-generator` as "dts-bundle-generator" | "rollup-plugin-dts" | false | undefined,
+  declarationEmitter: `rollup-plugin-dts` as "dts-bundle-generator" | "rollup-plugin-dts" | false | undefined,
   declarationOnlyForProduction: true,
   declarationFile: `lib.d.ts`,
 }
@@ -159,13 +159,9 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
     return pluginOptions
   }
   #getDtsPluginOptions() {
-    const compilerOptions = this.#getTypescriptCompilerOptions()
     const pluginOptions: DtsPluginOptions = {
+      tsconfig: this.#builder.fromContextFolder(`tsconfig.json`),
       respectExternal: false,
-      compilerOptions: {
-        ...compilerOptions,
-        declaration: true,
-      },
     } as DtsPluginOptions
     return pluginOptions
   }
@@ -237,6 +233,8 @@ export class TypescriptPlugin implements ConfigBuilderPlugin {
       strict: false,
       composite: false,
       declaration: false,
+      types: [`bun`],
+      lib: [`es2022`, `dom`, `esnext`],
     }
   }
   #getTypescriptOptions(): TsConfigJson {

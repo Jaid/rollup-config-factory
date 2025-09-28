@@ -16,7 +16,7 @@ const rootFolder = path.resolve(thisFolder, `..`, `..`)
 export const fixturesFolder = path.join(rootFolder, `test`, `fixture`)
 export const outputFolder = path.join(rootFolder, `out`, `fixture`)
 
-export const runTest = async (id: string) => {
+export const runTest = async (id: string, testContext: TestContext) => {
   const {fixtureProject, env} = /^(?<fixtureProject>.+)-(?<env>.+)$/.exec(id)!.groups!
   const fixtureFolder = path.join(fixturesFolder, fixtureProject)
   const outputFixtureFolder = path.join(outputFolder, id)
@@ -37,6 +37,7 @@ export const runTest = async (id: string) => {
     outputCompilationFolder,
     outputMetaFolder,
     outputFixtureFolder,
+    testContext,
   }
   startTiming(`ConfigBuilder`)
   let configBuilder: ConfigBuilder

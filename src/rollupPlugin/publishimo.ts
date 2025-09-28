@@ -46,7 +46,7 @@ export default function publishimoPlugin(pluginOptions: Options['parameter'] = {
       }
       /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
       // @ts-ignore ts(2339)
-      const publishimoResult = await publishimo.default(options.publishimoOptions)
+      const publishimoResult = await publishimo(options.publishimoOptions)
       const outputPkg = {
         ...publishimoResult.generatedPkg,
         ...options.extend,
