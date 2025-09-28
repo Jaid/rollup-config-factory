@@ -32,8 +32,7 @@
     "build": "NODE_ENV=development bun node_modules/rollup/dist/bin/rollup --config rollup.config.ts",
     "build:production": "NODE_ENV=production bun node_modules/rollup/dist/bin/rollup --config rollup.config.ts",
     "dts": "dts-bundle-generator --out-file out/dts/types.d.ts --verbose --no-banner src/index.ts",
-    "release": "fd --unrestricted --full-path 'dist/package/[\\w-]+/production/package.json' --exact-depth 5 --exec bash -c 'npm publish {//}'",
-    "release:windows": "pwsh -Command \"Get-ChildItem -Path 'dist/package/*/production/package.json' | ForEach-Object { npm publish $_.DirectoryName }\""
+    "release": "fd --unrestricted --full-path 'dist[\\\\/]package[\\\\/][\\w-]+[\\\\/]production[\\\\/]package.json' --exec bun publish --cwd {//}'"
   },
   "dependencies": {
     "@prettier/sync": "^0.6.1",
